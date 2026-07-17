@@ -1,3 +1,23 @@
+/**
+ * @file lib/sample-emails.ts
+ *
+ * Synthetic email fixtures used by the Phase A triage demo.
+ *
+ * Each entry is a `SampleEmail` (an `EmailInput` extended with UI metadata).
+ * The three samples cover the three main instructional scenarios:
+ *
+ * 1. `account-review`  – urgency + look-alike sender domain + credential request
+ * 2. `invoice-alert`   – payment pressure + unfamiliar destination link
+ * 3. `team-update`     – routine, low-signal message that still warrants verification
+ *
+ * Every address and domain uses the `.example` TLD (RFC 2606 reserved) so that
+ * no real network request can accidentally be triggered by clicking a URL.
+ *
+ * These fixtures are loaded by `EmailTriageForm` to populate the sample-selector
+ * buttons and pre-fill the form fields. They are also keyed to pre-computed
+ * `Analysis` objects in `lib/mock-analysis.ts`.
+ */
+
 import type { SampleEmail } from "@/lib/schemas";
 
 export const sampleEmails: SampleEmail[] = [
@@ -24,7 +44,7 @@ export const sampleEmails: SampleEmail[] = [
     label: "Routine team update",
     description: "Synthetic low-signal example that still recommends normal verification.",
     sender: "Jordan Lee <jordan.lee@harbor-studio.example>",
-    subject: "Notes from Tuesday’s planning session",
+    subject: "Notes from Tuesday's planning session",
     body: "Hi team — here are the notes and action items we discussed. No action is needed today; we can review the list in our next meeting.",
     url: "",
   },

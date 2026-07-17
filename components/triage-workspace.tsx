@@ -1,3 +1,44 @@
+/**
+ * @file components/triage-workspace.tsx
+ *
+ * Root client component that wires together the entire PhishLens single-page UI.
+ *
+ * `TriageWorkspace` owns all shared state and acts as the orchestrator between
+ * the three visible child components and the analysis library:
+ *
+ * State
+ * ─────
+ * - `input`            – the current value of all four email fields (sender,
+ *                        subject, body, optional URL)
+ * - `selectedSampleId` – the `id` of the active sample fixture, or `null` when
+ *                        the user has typed their own content
+ * - `analysis`         – the `Analysis` object returned after clicking "Analyze",
+ *                        or `null` before any analysis has been run
+ * - `error`            – a validation error string shown below the form, or `null`
+ *
+ * Event handlers
+ * ──────────────
+ * - `handleChange`  – updates a single field; clears `selectedSampleId` and
+ *                     `error` so the sample selection and report stay in sync
+ * - `handleSample`  – populates all four fields from a `SampleEmail` fixture and
+ *                     tracks which sample is active; clears any prior analysis
+ * - `handleAnalyze` – validates the form with `emailInputSchema`, sets `error`
+ *                     on failure, or calls `getMockAnalysis` and stores the result
+ *
+ * Layout
+ * ──────
+ * The component renders a full-height `<main>` containing:
+ *   1. A branded page header with the app name, phase badge, and privacy callout
+ *   2. `<SafetyNotice>` – persistent educational disclaimer
+ *   3. A two-column grid: `<EmailTriageForm>` (left) | `<AnalysisReport>` (right)
+ *   4. A footer repeating the privacy / non-verdict statement
+ *
+ * @see components/email-triage-form.tsx
+ * @see components/analysis-report.tsx
+ * @see components/safety-notice.tsx
+ * @see lib/mock-analysis.ts
+ */
+
 "use client";
 
 import { useState } from "react";

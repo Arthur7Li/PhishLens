@@ -1,3 +1,40 @@
+/**
+ * @file components/analysis-report.tsx
+ *
+ * Display component that renders a completed `Analysis` as a structured report.
+ *
+ * The component has two rendering modes:
+ *
+ * **Empty state** (`analysis === null`)
+ *   Renders a dashed placeholder card with a short prompt, shown before the user
+ *   has clicked "Analyze observable signals" for the first time.
+ *
+ * **Report state** (`analysis !== null`)
+ *   Renders the full structured report in four sections:
+ *   1. **Headline & summary** – a one-sentence verdict-free headline and a prose
+ *      paragraph summarising the observable cues.
+ *   2. **Signal cards** – one `<article>` per `Signal` in `analysis.signals`.
+ *      Each card shows the signal title, a colour-coded severity badge, an
+ *      indented evidence quote, and an educational explanation.
+ *   3. **Safe next steps** – a numbered ordered list of `analysis.nextSteps`
+ *      actions the user can take without following links or opening attachments.
+ *   4. **Why this matters** – `analysis.learningNote`, a short educational takeaway
+ *      displayed in a tinted callout box alongside the numbered steps.
+ *
+ * Signal severity is mapped to display strings and Tailwind colour classes via
+ * the `labels` and `colors` lookup tables:
+ *   - `caution`  → "Worth noting"     (blue tones)
+ *   - `review`   → "Review carefully" (amber tones)
+ *   - `elevated` → "Higher concern"   (red tones)
+ *
+ * The `<section>` uses `aria-live="polite"` so screen readers announce the report
+ * when it appears after the user clicks "Analyze".
+ *
+ * Props
+ * ─────
+ * @prop analysis – the `Analysis` object to render, or `null` for the empty state
+ */
+
 import type { Analysis, SignalLevel } from "@/lib/schemas";
 
 const labels: Record<SignalLevel, string> = { caution: "Worth noting", review: "Review carefully", elevated: "Higher concern" };

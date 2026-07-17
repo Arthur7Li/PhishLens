@@ -1,3 +1,34 @@
+/**
+ * @file app/globals.css
+ *
+ * Global stylesheet for PhishLens.
+ *
+ * Responsibilities
+ * ────────────────
+ * 1. Imports Tailwind CSS v4 so all utility classes are available across the app.
+ * 2. Defines a set of CSS custom properties (design tokens) on `:root` that drive
+ *    the dark navy colour palette used throughout the UI:
+ *
+ *    --canvas        deep navy page background
+ *    --surface       card/panel background, one step lighter than canvas
+ *    --surface-raised elevated card background (unused in Phase A, reserved)
+ *    --line          border/divider colour
+ *    --ink           primary text colour
+ *    --muted         secondary / helper text colour
+ *    --brand         teal accent colour (buttons, highlights, brand mark)
+ *    --warn          amber warning colour (validation errors)
+ *
+ * 3. Applies a `radial-gradient` spotlight on the `<body>` background to create
+ *    subtle visual depth in the upper-left corner.
+ * 4. Resets `box-sizing` to `border-box` globally.
+ * 5. Inherits the system font stack for `button`, `input`, and `textarea`.
+ * 6. Sets a teal `::selection` highlight matching the brand colour.
+ *
+ * These tokens are referenced directly as Tailwind arbitrary values
+ * (e.g. `bg-[#66e3c4]`) in component files rather than through Tailwind's theme
+ * config, which keeps Phase A self-contained without a `tailwind.config.ts`.
+ */
+
 @import "tailwindcss";
 
 :root {

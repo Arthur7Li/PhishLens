@@ -1,9 +1,48 @@
+/**
+ * @file lib/mock-analysis.ts
+ *
+ * Deterministic, in-browser analysis engine for Phase A.
+ *
+ * Phase A intentionally makes NO network requests and calls NO AI model.
+ * All signal extraction happens synchronously in the browser using static
+ * lookup tables and lightweight regex checks on the form input.
+ *
+ * Exports
+ * ───────
+ * `getMockAnalysis(sampleId, input) → Analysis`
+ *   Returns a pre-written `Analysis` when `sampleId` matches one of the three
+ *   synthetic fixtures, or falls back to a generic regex-based report for
+ *   free-text input that the user types manually.
+ *
+ * Internal constants
+ * ──────────────────
+ * `sharedSteps`      – three safe-next-step recommendations shared across all
+ *                      analyses (do not click links, go to the known site directly,
+ *                      use your org's reporting process).
+ * `sampleAnalyses`   – a keyed record mapping each sample email ID to a
+ *                      hand-authored `Analysis` that highlights the specific
+ *                      pedagogical cues planted in that fixture.
+ *
+ * Fallback logic (free-text input)
+ * ─────────────────────────────────
+ * When the user types their own email rather than selecting a sample, the
+ * function runs three regex checks on `input.body` to detect:
+ *   – time-sensitive language  (urgent / immediate / today / hour)
+ *   – sensitive-request language  (password / code / verify / payment)
+ *   – a supplied URL  (presence of `input.url`)
+ * The result is a single "caution" signal reminding the user that this is a
+ * local demo and that independent verification is always warranted.
+ *
+ * @see lib/schemas.ts  for the `Analysis` and `EmailInput` type definitions
+ * @see lib/sample-emails.ts  for the sample fixtures keyed to `sampleAnalyses`
+ */
+
 import type { Analysis, EmailInput } from "@/lib/schemas";
 
 const sharedSteps = [
   "Avoid using links or phone numbers provided in the message until you verify them independently.",
-  "Open the organization’s known website or a trusted internal directory instead of replying or clicking.",
-  "If this reached a work account, use your organization’s established reporting process.",
+  "Open the organization's known website or a trusted internal directory instead of replying or clicking.",
+  "If this reached a work account, use your organization's established reporting process.",
 ];
 
 const sampleAnalyses: Record<string, Analysis> = {

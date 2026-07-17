@@ -1,3 +1,39 @@
+/**
+ * @file components/email-triage-form.tsx
+ *
+ * Controlled form component for entering or loading email content.
+ *
+ * Renders two interaction areas:
+ *
+ * 1. **Sample selector** – a row of three buttons, one per `SampleEmail` fixture.
+ *    Clicking a button fires `onSample`, which tells the parent (`TriageWorkspace`)
+ *    to populate all fields with the fixture's data and track the active sample ID.
+ *    The currently active sample button is visually highlighted.
+ *
+ * 2. **Field inputs** – four form fields defined by the `fields` constant:
+ *    - Sender       (single-line `<input>`)
+ *    - Subject      (single-line `<input>`)
+ *    - Email body   (resizable `<textarea>`, 6 rows default)
+ *    - Optional URL (single-line `<input>`)
+ *    Each field is a controlled input that fires `onChange` on every keystroke,
+ *    which clears the active sample selection in the parent so state stays in sync.
+ *
+ * The component is intentionally **uncontrolled at the validation layer** – it
+ * renders the `error` string from the parent rather than performing its own
+ * validation. The "Analyze observable signals" button delegates to `onAnalyze`,
+ * which runs Zod validation in `TriageWorkspace` before calling the analysis engine.
+ *
+ * Props
+ * ─────
+ * @prop input            – current values for all four fields (from parent state)
+ * @prop samples          – the array of `SampleEmail` fixtures to display as buttons
+ * @prop selectedSampleId – id of the currently selected sample, or null
+ * @prop error            – validation error message to display, or null
+ * @prop onChange         – (field, value) → void; called on every input change
+ * @prop onSample         – (sample) → void; called when a sample button is clicked
+ * @prop onAnalyze        – () → void; called when the primary CTA is clicked
+ */
+
 "use client";
 
 import type { ChangeEvent } from "react";
