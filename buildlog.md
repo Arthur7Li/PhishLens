@@ -1,0 +1,9 @@
+# Build log
+
+## July 16, 2026 — Phase A
+- Defined PhishLens as an AI-assisted phishing-triage and education tool.
+- Used Codex to scaffold the Next.js, TypeScript, and Tailwind project.
+- Built the single-page email intake and static result workflow.
+- Added three synthetic test emails and educational safety notices.
+- Deferred all real model calls, external integrations, link fetching,
+  attachment handling, and storage to keep user input isolated.
