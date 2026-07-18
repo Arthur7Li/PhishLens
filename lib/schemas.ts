@@ -18,6 +18,7 @@
  * ──────────────
  * - `EmailInput`   – inferred from `emailInputSchema`
  * - `SignalLevel`  – inferred from `signalLevelSchema` ("caution" | "review" | "elevated")
+ * - `SignalFinding` – inferred from `signalSchema`, including its rule ID and source
  * - `Analysis`     – inferred from `analysisSchema`
  * - `SampleEmail`  – `EmailInput` extended with display metadata for the sample selector
  */
@@ -36,14 +37,38 @@ export type EmailInput = z.infer<typeof emailInputSchema>;
 export const signalLevelSchema = z.enum(["caution", "review", "elevated"]);
 export type SignalLevel = z.infer<typeof signalLevelSchema>;
 
+/** Identifies the local rule that produced a signal, making every result auditable. */
+export const signalIdSchema = z.enum([
+  "urgency",
+  "credential-request",
+  "payment-request",
+  "lookalike-domain",
+  "provided-url",
+  "sender-url-mismatch",
+]);
+export type SignalId = z.infer<typeof signalIdSchema>;
+
+/** Identifies the user-provided field that supplied the displayed evidence. */
+export const signalSourceSchema = z.enum(["sender", "subject", "body", "url"]);
+export type SignalSource = z.infer<typeof signalSourceSchema>;
+
 export const signalSchema = z.object({
+  id: signalIdSchema,
   title: z.string(),
+  source: signalSourceSchema,
   evidence: z.string(),
   explanation: z.string(),
   level: signalLevelSchema,
+  riskWeight: z.number().int().min(0).max(2),
 });
+export type SignalFinding = z.infer<typeof signalSchema>;
+
+/** Summarizes only configured rule weights; it never labels an email safe or malicious. */
+export const analysisRiskLevelSchema = z.enum(["informational", "caution", "review", "elevated"]);
+export type AnalysisRiskLevel = z.infer<typeof analysisRiskLevelSchema>;
 
 export const analysisSchema = z.object({
+  riskLevel: analysisRiskLevelSchema,
   headline: z.string(),
   summary: z.string(),
   signals: z.array(signalSchema),

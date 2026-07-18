@@ -23,7 +23,7 @@
  * - `handleSample`  – populates all four fields from a `SampleEmail` fixture and
  *                     tracks which sample is active; clears any prior analysis
  * - `handleAnalyze` – validates the form with `emailInputSchema`, sets `error`
- *                     on failure, or calls `getMockAnalysis` and stores the result
+ *                     on failure, or runs the local deterministic signal engine
  *
  * Layout
  * ──────
@@ -36,7 +36,7 @@
  * @see components/email-triage-form.tsx
  * @see components/analysis-report.tsx
  * @see components/safety-notice.tsx
- * @see lib/mock-analysis.ts
+ * @see lib/phishing-signal-engine.ts
  */
 
 "use client";
@@ -45,7 +45,7 @@ import { useState } from "react";
 import { AnalysisReport } from "@/components/analysis-report";
 import { EmailTriageForm } from "@/components/email-triage-form";
 import { SafetyNotice } from "@/components/safety-notice";
-import { getMockAnalysis } from "@/lib/mock-analysis";
+import { analyzePhishingSignals } from "@/lib/phishing-signal-engine";
 import { sampleEmails } from "@/lib/sample-emails";
 import { emailInputSchema, type Analysis, type EmailInput, type SampleEmail } from "@/lib/schemas";
 
@@ -74,13 +74,13 @@ export function TriageWorkspace() {
     const parsed = emailInputSchema.safeParse(input);
     if (!parsed.success) { setError(parsed.error.issues[0]?.message ?? "Please complete the form."); return; }
     setError(null);
-    setAnalysis(getMockAnalysis(selectedSampleId, parsed.data));
+    setAnalysis(analyzePhishingSignals(parsed.data));
   };
 
   return (
     <main className="mx-auto min-h-screen max-w-7xl px-4 py-8 sm:px-8 sm:py-12">
       <header className="mb-8 flex flex-col justify-between gap-5 border-b border-[#27405f] pb-7 lg:flex-row lg:items-end">
-        <div><div className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-[#66e3c4] text-xl font-black text-[#082019]">P</span><span className="text-xl font-bold tracking-tight">PhishLens</span><span className="rounded-full border border-[#315272] px-2.5 py-1 text-xs font-semibold text-[#9ec6de]">Phase A</span></div><h1 className="mt-5 max-w-2xl text-3xl font-semibold tracking-tight text-white sm:text-4xl">Pause, inspect the evidence, choose a safer next step.</h1><p className="mt-3 max-w-2xl leading-7 text-[#9bb0c5]">A private, educational workspace for examining observable email cues—without following links or treating any automated result as a definitive verdict.</p></div>
+        <div><div className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-[#66e3c4] text-xl font-black text-[#082019]">P</span><span className="text-xl font-bold tracking-tight">PhishLens</span><span className="rounded-full border border-[#315272] px-2.5 py-1 text-xs font-semibold text-[#9ec6de]">Phase B</span></div><h1 className="mt-5 max-w-2xl text-3xl font-semibold tracking-tight text-white sm:text-4xl">Pause, inspect the evidence, choose a safer next step.</h1><p className="mt-3 max-w-2xl leading-7 text-[#9bb0c5]">A private, educational workspace for examining observable email cues—without following links or treating any automated result as a definitive verdict.</p></div>
         <div className="rounded-xl border border-[#315272] bg-[#0d2137] px-4 py-3 text-sm text-[#b7cce0]"><span className="font-semibold text-[#66e3c4]">Local-only demo</span><br />No requests leave this page.</div>
       </header>
       <SafetyNotice />
