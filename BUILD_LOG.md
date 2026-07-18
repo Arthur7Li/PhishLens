@@ -14,5 +14,3 @@
 - Kept supplied URLs informational: they have zero risk weight, are never fetched, and cannot raise the report level alone.
 - Added Vitest coverage for rule behavior, evidence, deterministic output, and the no-fetch boundary.
 - Preserved the single-page UX, three synthetic samples, and all privacy and non-verdict notices.
-- - Used Codex to implement the typed evaluator, generate the Vitest test plan,
-  preserve the existing UI contract, and run lint, typecheck, test, and build verification.
