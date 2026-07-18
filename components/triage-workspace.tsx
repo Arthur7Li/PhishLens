@@ -43,6 +43,7 @@
 
 import { useState } from "react";
 import { AnalysisReport } from "@/components/analysis-report";
+import { AiExplanationPanel } from "@/components/ai-explanation-panel";
 import { EmailTriageForm } from "@/components/email-triage-form";
 import { SafetyNotice } from "@/components/safety-notice";
 import { analyzePhishingSignals } from "@/lib/phishing-signal-engine";
@@ -55,11 +56,13 @@ export function TriageWorkspace() {
   const [input, setInput] = useState<EmailInput>(emptyInput);
   const [selectedSampleId, setSelectedSampleId] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
+  const [analysisVersion, setAnalysisVersion] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
   const handleChange = (field: keyof EmailInput, value: string) => {
     setInput((current) => ({ ...current, [field]: value }));
     setSelectedSampleId(null);
+    setAnalysis(null);
     setError(null);
   };
 
@@ -75,17 +78,18 @@ export function TriageWorkspace() {
     if (!parsed.success) { setError(parsed.error.issues[0]?.message ?? "Please complete the form."); return; }
     setError(null);
     setAnalysis(analyzePhishingSignals(parsed.data));
+    setAnalysisVersion((current) => current + 1);
   };
 
   return (
     <main className="mx-auto min-h-screen max-w-7xl px-4 py-8 sm:px-8 sm:py-12">
       <header className="mb-8 flex flex-col justify-between gap-5 border-b border-[#27405f] pb-7 lg:flex-row lg:items-end">
-        <div><div className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-[#66e3c4] text-xl font-black text-[#082019]">P</span><span className="text-xl font-bold tracking-tight">PhishLens</span><span className="rounded-full border border-[#315272] px-2.5 py-1 text-xs font-semibold text-[#9ec6de]">Phase B</span></div><h1 className="mt-5 max-w-2xl text-3xl font-semibold tracking-tight text-white sm:text-4xl">Pause, inspect the evidence, choose a safer next step.</h1><p className="mt-3 max-w-2xl leading-7 text-[#9bb0c5]">A private, educational workspace for examining observable email cues—without following links or treating any automated result as a definitive verdict.</p></div>
-        <div className="rounded-xl border border-[#315272] bg-[#0d2137] px-4 py-3 text-sm text-[#b7cce0]"><span className="font-semibold text-[#66e3c4]">Local-only demo</span><br />No requests leave this page.</div>
+        <div><div className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-[#66e3c4] text-xl font-black text-[#082019]">P</span><span className="text-xl font-bold tracking-tight">PhishLens</span><span className="rounded-full border border-[#315272] px-2.5 py-1 text-xs font-semibold text-[#9ec6de]">Phase C</span></div><h1 className="mt-5 max-w-2xl text-3xl font-semibold tracking-tight text-white sm:text-4xl">Pause, inspect the evidence, choose a safer next step.</h1><p className="mt-3 max-w-2xl leading-7 text-[#9bb0c5]">An educational workspace for examining observable email cues—without following links or treating any automated result as a definitive verdict.</p></div>
+        <div className="rounded-xl border border-[#315272] bg-[#0d2137] px-4 py-3 text-sm text-[#b7cce0]"><span className="font-semibold text-[#66e3c4]">Local report first</span><br />AI explanation is optional.</div>
       </header>
       <SafetyNotice />
-      <div className="mt-7 grid gap-7 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]"><EmailTriageForm input={input} samples={sampleEmails} selectedSampleId={selectedSampleId} error={error} onChange={handleChange} onSample={handleSample} onAnalyze={handleAnalyze} /><AnalysisReport analysis={analysis} /></div>
-      <footer className="mt-10 border-t border-[#27405f] pt-5 text-sm leading-6 text-[#7694ad]">Built as a security-sensitive educational prototype. PhishLens does not fetch URLs, execute attachments, connect to inboxes, or retain submitted content.</footer>
+      <div className="mt-7 grid gap-7 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]"><EmailTriageForm input={input} samples={sampleEmails} selectedSampleId={selectedSampleId} error={error} onChange={handleChange} onSample={handleSample} onAnalyze={handleAnalyze} /><div className="space-y-7"><AnalysisReport analysis={analysis} />{analysis && <AiExplanationPanel key={analysisVersion} input={input} analysis={analysis} />}</div></div>
+      <footer className="mt-10 border-t border-[#27405f] pt-5 text-sm leading-6 text-[#7694ad]">Built as a security-sensitive educational prototype. Local deterministic analysis stays in the browser. The optional AI explanation sends submitted content to Groq only after you choose it. PhishLens does not fetch URLs, execute attachments, connect to inboxes, or retain submitted content.</footer>
     </main>
   );
 }
