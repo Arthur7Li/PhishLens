@@ -7,8 +7,8 @@
 - Added three synthetic test emails and educational safety notices.
 - Deferred all real model calls, external integrations, link fetching,
   attachment handling, and storage to keep user input isolated.
-
-## July 18, 2026 - Phase B
+  
+## July 18, 2026 — Phase B
 - Replaced pre-written analysis mappings with a transparent, deterministic local signal engine.
 - Added typed rules for urgency, credential requests, payment requests, conservative sender-domain character substitutions, supplied URLs, and sender-to-URL domain differences.
 - Kept supplied URLs informational: they have zero risk weight, are never fetched, and cannot raise the report level alone.
