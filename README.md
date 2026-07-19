@@ -41,7 +41,9 @@ npm run build
 7. Without `GROQ_API_KEY`, use each unchanged synthetic sample and choose **Generate AI explanation**. Confirm the visible label says: “Demo explanation based on PhishLens’ local rules — no content was sent to Groq.”
 8. Without `GROQ_API_KEY`, enter custom text, analyze it, and choose **Generate AI explanation**. Confirm the only explanation result says: “Live AI explanation is unavailable in this public demo. Your local deterministic report remains available.”
 9. Edit any field and verify the result and any explanation clear; press Analyze again and confirm the local deterministic report appears.
-10. Verify the educational, privacy, and non-definitive-verdict notices are visible before and after analysis.
+10. Use Tab, Enter, and Space to select examples, move through the form, submit the analysis, and reach the optional explanation button. Confirm focus is always visible and the validation error identifies its field.
+11. At 320 px, 375 px, and 768 px viewport widths, confirm there is no horizontal scrolling and controls remain readable and usable.
+12. Verify the educational, privacy, and non-definitive-verdict notices are visible before and after analysis.
 
 ## Phase B: transparent local signal engine
 
@@ -62,11 +64,16 @@ The optional runtime AI explanation uses the free Groq developer API and the ope
 - The route limits raw request bodies to 10,000 characters and caps sender, subject, body, and URL fields before a provider call.
 - The application does not fetch or visit supplied URLs, execute attachments, connect to inboxes, store submissions, log email content, add analytics, or use authentication.
 - Every optional-route response includes `Cache-Control: no-store`.
-- If the key is unavailable, a live call fails, or the demo limit is reached, only an unchanged synthetic sample can receive a visibly labeled local static explanation. Custom text receives no fallback content, only the unavailable message.
+- If the key is unavailable or the local demo capacity guard rejects a request before any provider call, only an unchanged synthetic sample can receive a visibly labeled local static explanation. Custom text receives no fallback content, only the unavailable message.
+- After any Groq provider attempt, including an upstream rate limit, timeout, malformed response, or validation failure, the app returns only the generic unavailable message. It never labels that state as “no content was sent to Groq.”
 
 ### Public-demo rate limits
 
 The live route applies a best-effort in-memory limiter: per runtime instance, per IP it permits 2 requests per minute and 10 requests per UTC day; per runtime instance it permits 50 live requests per UTC day across the demo. This state is not persistent or shared across Vercel instances, so it is not a globally durable limiter. Static local fallbacks do not consume live-provider allowances.
+
+## Phase D: demo readiness and accessibility
+
+Phase D adds a compact first-run workflow, clearer local-report hierarchy, visible local-versus-optional-AI boundaries, keyboard-friendly sample selection and form submission, field-associated validation errors, loading status, and responsive touch targets. It does not change the deterministic signal engine, the optional-consent boundary, or any no-fetch/no-storage restrictions.
 
 ### Configure Groq safely
 

@@ -6,18 +6,11 @@
  * no logging or persistence, and returns no-store responses.
  */
 
-import {
-  DEMO_EXPLANATION_NOTICE,
-  LIVE_AI_UNAVAILABLE_MESSAGE,
-  MAX_AI_REQUEST_BODY_CHARS,
-  aiExplanationInputSchema,
-  type AiExplanationInput,
-  type AiExplanationResponse,
-} from "@/lib/ai-explanation-schema";
+import { MAX_AI_REQUEST_BODY_CHARS, aiExplanationInputSchema, type AiExplanationResponse } from "@/lib/ai-explanation-schema";
+import { createAiExplanationFallback } from "@/lib/ai-explanation-fallback";
 import { checkAndConsumeDemoRequest, getClientIp } from "@/lib/demo-rate-limit.server";
 import { generateGroqExplanation, isGroqConfigured } from "@/lib/groq-explanation.server";
 import { analyzePhishingSignals } from "@/lib/phishing-signal-engine";
-import { getStaticDemoExplanation } from "@/lib/static-demo-explanations";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -30,21 +23,6 @@ const noStoreHeaders = {
 /** Returns a compact JSON response that is never cacheable by the browser or CDN. */
 function jsonResponse(body: AiExplanationResponse | { error: string }, status = 200): Response {
   return Response.json(body, { status, headers: noStoreHeaders });
-}
-
-/**
- * Keeps samples usable during a missing key, a provider failure, or a demo cap,
- * while custom submissions never receive substitute content that could be
- * mistaken for a live provider result.
- */
-function createFallback(input: AiExplanationInput): AiExplanationResponse {
-  const explanation = getStaticDemoExplanation(input);
-
-  if (explanation) {
-    return { mode: "demo", notice: DEMO_EXPLANATION_NOTICE, explanation };
-  }
-
-  return { mode: "unavailable", message: LIVE_AI_UNAVAILABLE_MESSAGE };
 }
 
 /** Handles a same-origin opt-in request without accepting client-supplied analysis or sample IDs. */
@@ -84,18 +62,28 @@ export async function POST(request: Request): Promise<Response> {
   const input = parsedInput.data;
   const analysis = analyzePhishingSignals(input);
 
-  if (!isGroqConfigured()) return jsonResponse(createFallback(input));
+  // A missing key stops the request before any provider call, so unchanged
+  // synthetic samples may truthfully receive their local demo explanation.
+  if (!isGroqConfigured()) {
+    return jsonResponse(createAiExplanationFallback(input, "before-provider"));
+  }
 
   const rateLimit = checkAndConsumeDemoRequest(
     getClientIp(request.headers.get("x-forwarded-for"), request.headers.get("x-real-ip")),
   );
 
-  if (!rateLimit.allowed) return jsonResponse(createFallback(input));
+  // The local capacity guard runs before Groq receives content, preserving the
+  // truthful no-content-sent label for unchanged synthetic samples.
+  if (!rateLimit.allowed) {
+    return jsonResponse(createAiExplanationFallback(input, "before-provider"));
+  }
 
   try {
     const explanation = await generateGroqExplanation(input, analysis);
     return jsonResponse({ mode: "live", explanation });
   } catch {
-    return jsonResponse(createFallback(input));
+    // Groq may already have received content once this attempt begins. Never
+    // return a local sample label that says no content was sent in this state.
+    return jsonResponse(createAiExplanationFallback(input, "after-provider"));
   }
 }
