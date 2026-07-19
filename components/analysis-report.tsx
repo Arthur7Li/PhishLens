@@ -42,27 +42,35 @@ const colors: Record<SignalLevel, string> = { caution: "border-[#4a7592] text-[#
 
 export function AnalysisReport({ analysis }: { analysis: Analysis | null }) {
   if (!analysis) {
-    return <section className="flex min-h-96 items-center justify-center rounded-3xl border border-dashed border-[#315272] bg-[#0b1829]/70 p-8 text-center"><div><p className="text-lg font-semibold text-[#d7e9f9]">Your evidence-first report will appear here.</p><p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-[#89a6bf]">Select one of the three local examples, or enter an email without opening its link or attachment.</p></div></section>;
+    return <section className="flex min-h-96 items-center justify-center rounded-3xl border border-dashed border-[#315272] bg-[#0b1829]/70 p-8 text-center" aria-labelledby="report-placeholder-heading"><div><p className="text-sm font-semibold tracking-[0.18em] text-[#66e3c4] uppercase">Local report</p><h2 id="report-placeholder-heading" className="mt-2 text-lg font-semibold text-[#d7e9f9]">Your evidence-first report will appear here.</h2><p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-[#89a6bf]">Select one of the three local examples, or enter an email without opening its link or attachment.</p></div></section>;
   }
 
   return (
-    <section aria-live="polite" className="rounded-3xl border border-[#27405f] bg-[#0d1b2e]/90 p-5 shadow-2xl shadow-black/20 sm:p-7">
-      <p className="text-sm font-semibold tracking-[0.18em] text-[#66e3c4] uppercase">Triage report</p>
-      <h2 className="mt-2 text-2xl font-semibold text-white">{analysis.headline}</h2>
+    <section className="rounded-3xl border border-[#27405f] bg-[#0d1b2e]/90 p-5 shadow-2xl shadow-black/20 sm:p-7" aria-labelledby="local-report-heading">
+      <p className="sr-only" role="status">Local deterministic report ready. {analysis.signals.length} observable finding{analysis.signals.length === 1 ? "" : "s"} shown.</p>
+      <p className="text-sm font-semibold tracking-[0.18em] text-[#66e3c4] uppercase">Local deterministic report</p>
+      <h2 id="local-report-heading" className="mt-2 text-2xl font-semibold text-white">{analysis.headline}</h2>
       <p className="mt-3 leading-7 text-[#b6cadb]">{analysis.summary}</p>
 
-      <div className="mt-7 space-y-3">
-        {analysis.signals.map((signal) => (
-          <article key={signal.title} className="rounded-2xl border border-[#294663] bg-[#0a192a] p-4">
-            <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="font-semibold text-[#eff8ff]">{signal.title}</h3><span className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${colors[signal.level]}`}>{labels[signal.level]}</span></div>
-            <p className="mt-3 rounded-lg bg-[#102740] p-3 text-sm italic leading-6 text-[#d2e5f4]">Evidence: {signal.evidence}</p>
-            <p className="mt-3 text-sm leading-6 text-[#a9c0d4]">{signal.explanation}</p>
-          </article>
-        ))}
+      <div className="mt-7">
+        <div className="flex flex-wrap items-baseline justify-between gap-2"><h3 className="font-semibold text-white">Observable findings</h3><p className="text-sm text-[#89a6bf]">These are local text patterns, not a verdict.</p></div>
+        {analysis.signals.length > 0 ? (
+          <div className="mt-3 space-y-3">
+            {analysis.signals.map((signal) => (
+              <article key={signal.id} className="rounded-2xl border border-[#294663] bg-[#0a192a] p-4">
+                <div className="flex flex-wrap items-center justify-between gap-2"><h4 className="font-semibold text-[#eff8ff]">{signal.title}</h4><span className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${colors[signal.level]}`}>{labels[signal.level]}</span></div>
+                <div className="mt-3 rounded-xl border border-[#294663] bg-[#102740] p-3"><p className="text-xs font-semibold tracking-[0.14em] text-[#9ec6de] uppercase">Observed evidence</p><blockquote className="mt-1 text-sm italic leading-6 text-[#d2e5f4]">{signal.evidence}</blockquote></div>
+                <div className="mt-3"><p className="text-xs font-semibold tracking-[0.14em] text-[#9ec6de] uppercase">Why it matters</p><p className="mt-1 text-sm leading-6 text-[#a9c0d4]">{signal.explanation}</p></div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-3 rounded-2xl border border-[#315272] bg-[#102840] p-4"><p className="font-semibold text-[#eff8ff]">No configured observable cues were found.</p><p className="mt-1 text-sm leading-6 text-[#b8cde0]">That absence is not a safety verdict. Use the next steps below whenever independent verification is appropriate.</p></div>
+        )}
       </div>
 
       <div className="mt-7 grid gap-5 lg:grid-cols-2">
-        <div><h3 className="font-semibold text-white">Safe next steps</h3><ol className="mt-3 space-y-3">{analysis.nextSteps.map((step, index) => <li key={step} className="flex gap-3 text-sm leading-6 text-[#c2d4e2]"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#1a4651] text-xs font-bold text-[#66e3c4]">{index + 1}</span>{step}</li>)}</ol></div>
+        <div><h3 className="font-semibold text-white">Safer next steps</h3><ol className="mt-3 space-y-3">{analysis.nextSteps.map((step, index) => <li key={step} className="flex gap-3 text-sm leading-6 text-[#c2d4e2]"><span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#1a4651] text-xs font-bold text-[#66e3c4]">{index + 1}</span>{step}</li>)}</ol></div>
         <div className="rounded-2xl border border-[#315272] bg-[#102840] p-4"><h3 className="font-semibold text-[#eff8ff]">Why this matters</h3><p className="mt-2 text-sm leading-6 text-[#b8cde0]">{analysis.learningNote}</p></div>
       </div>
     </section>

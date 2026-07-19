@@ -19,10 +19,14 @@
 
 export function SafetyNotice() {
   return (
-    <aside className="rounded-2xl border border-[#315272] bg-[#102940] p-4 text-sm text-[#c5d8e9]" aria-label="Safety and privacy notice">
+    <aside className="mt-4 rounded-2xl border border-[#315272] bg-[#102940] p-4 text-sm text-[#c5d8e9]" aria-labelledby="safety-notice-heading">
       <p className="font-semibold text-[#e7f4ff]">Educational triage, not a verdict</p>
-      <p className="mt-1 leading-6">PhishLens highlights observable cues to help you decide what to verify next. It does not determine that any email is safe or malicious.</p>
-      <p className="mt-2 leading-6 text-[#9fbed7]">The deterministic report stays in your browser. Only if you choose the separate AI explanation does PhishLens send submitted content and server-recomputed findings to Groq. It does not fetch links, process attachments, connect to email, store content, or send telemetry.</p>
+      <h2 id="safety-notice-heading" className="mt-1 text-base font-semibold text-[#e7f4ff]">Use the evidence to decide what to verify next.</h2>
+      <p className="mt-1 leading-6">PhishLens highlights observable cues. It does not determine that any email is safe or malicious.</p>
+      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+        <p className="rounded-xl border border-[#315272] bg-[#0d2137] p-3 leading-6"><span className="font-semibold text-[#66e3c4]">Always local:</span> deterministic analysis stays in your browser and never fetches links, processes attachments, or connects to email.</p>
+        <p className="rounded-xl border border-[#315272] bg-[#0d2137] p-3 leading-6"><span className="font-semibold text-[#ffd080]">Only with consent:</span> the optional AI explanation sends submitted content and server-recomputed findings to Groq. PhishLens does not store content or send telemetry.</p>
+      </div>
     </aside>
   );
 }

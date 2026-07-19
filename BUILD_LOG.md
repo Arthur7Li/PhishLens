@@ -23,3 +23,9 @@
 - Added visibly labeled local static explanations for the three unchanged synthetic samples when live generation is unavailable or capped; custom text receives only the unavailable notice in that state.
 - Kept the no-URL-fetch, no-attachment-processing, no-storage, no-logging, no-authentication, no-analytics, and no-email-integration boundaries.
 - Codex with GPT-5.6 was used to build and test the project. The optional runtime AI explanation uses the free Groq developer API and the open-weight `openai/gpt-oss-20b` model. The deterministic browser-only engine remains canonical.
+
+## July 18, 2026 — Phase D
+- Added a compact three-step orientation and clearer visual separation between local deterministic evidence and the optional Groq explanation.
+- Improved deterministic finding cards, no-configured-cues messaging, safer-next-step scanability, mobile touch targets, keyboard focus, semantic form submission, sample selection state, validation associations, and loading status.
+- Corrected fallback truthfulness: the local sample explanation labeled “no content was sent to Groq” is now possible only before a provider attempt, when the key is absent or the local capacity guard blocks the request. Post-attempt provider failures return only the generic unavailable message.
+- Added unit coverage for the fallback-stage rule and preserved all existing privacy, no-fetch, no-storage, and non-verdict boundaries.
