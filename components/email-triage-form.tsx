@@ -2,8 +2,8 @@
  * @file components/email-triage-form.tsx
  *
  * Controlled input workspace for a local deterministic review. Sample previews
- * are presentation-only descriptions of the existing synthetic fixtures; they
- * neither add rules nor evaluate any user-provided content.
+ * are presentation-only descriptions of existing synthetic fixtures; they do
+ * not add rules or evaluate user-provided content.
  */
 
 "use client";
@@ -34,8 +34,8 @@ const fields: Array<{ key: keyof EmailInput; label: string; placeholder: string;
 ];
 
 const sampleCuePreviews: Record<SampleEmail["id"], readonly string[]> = {
-  "account-review": ["Urgency", "Credential request"],
-  "invoice-alert": ["Payment request", "Supplied URL"],
+  "account-review": ["Urgency", "Credential request", "URL supplied"],
+  "invoice-alert": ["Payment request", "URL supplied"],
   "team-update": ["Routine message", "Verify normally"],
 };
 
@@ -62,24 +62,25 @@ export function EmailTriageForm({
     event.preventDefault();
     const invalidField = onAnalyze();
 
+    // The workspace owns validation; the form moves focus to the field it identified.
     if (invalidField) window.requestAnimationFrame(() => fieldRefs.current[invalidField]?.focus());
   };
 
   return (
-    <section className="rounded-3xl border border-[#27405f] bg-[#0d1b2e]/90 p-5 shadow-2xl shadow-black/20 sm:p-7" aria-labelledby="input-workspace-heading">
-      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+    <section id="input-workspace" className="workspace-panel triage-form-panel" aria-labelledby="input-workspace-heading">
+      <div className="panel-intro">
         <div>
-          <p className="text-sm font-semibold tracking-[0.18em] text-[#66e3c4] uppercase">Input workspace</p>
-          <h2 id="input-workspace-heading" className="mt-1 text-xl font-semibold text-white">Start with a sample or paste email text</h2>
+          <p className="eyebrow">Input workspace</p>
+          <h2 id="input-workspace-heading" className="panel-title">Start with a sample or paste email text</h2>
         </div>
-        <p className="max-w-xs text-sm leading-6 text-[#9bb0c5]">Try a local synthetic example, or paste your own email below.</p>
+        <p className="panel-intro-copy">Try a local synthetic example, or paste your own email below.</p>
       </div>
 
-      <form className="mt-5" onSubmit={submit} noValidate aria-busy={isAnalyzing}>
-        <div id="sample-options" ref={sampleSelectorRef} tabIndex={-1} className="rounded-2xl focus:outline-none focus:ring-4 focus:ring-[#66e3c4]/30">
+      <form className="triage-form" onSubmit={submit} noValidate aria-busy={isAnalyzing}>
+        <div id="sample-options" ref={sampleSelectorRef} tabIndex={-1} className="sample-selector">
           <fieldset>
-            <legend className="text-sm font-medium text-[#d9e8f5]">Choose a local synthetic example, or enter your own text below.</legend>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <legend>Choose a local synthetic example, or enter your own text below.</legend>
+            <div className="sample-grid">
               {samples.map((sample) => {
                 const isSelected = selectedSampleId === sample.id;
 
@@ -89,17 +90,17 @@ export function EmailTriageForm({
                     type="button"
                     onClick={() => onSample(sample)}
                     aria-pressed={isSelected}
-                    className={`min-h-36 rounded-xl border p-3 text-left transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#66e3c4]/30 motion-reduce:transition-none ${isSelected ? "border-[#66e3c4] bg-[#173b4a]" : "border-[#315272] bg-[#102238] hover:border-[#5e86a8] hover:bg-[#132b43]"}`}
+                    className={`sample-card ${isSelected ? "is-selected" : ""}`}
                   >
-                    <span className="flex items-start justify-between gap-3">
-                      <span className="text-sm font-semibold text-[#eff8ff]">{sample.label}</span>
-                      {isSelected && <span className="shrink-0 rounded-full border border-[#66e3c4] px-2 py-0.5 text-xs font-semibold text-[#9df1dc]">Selected</span>}
+                    <span className="sample-card-heading">
+                      <span>{sample.label}</span>
+                      {isSelected && <span className="selected-indicator">Selected</span>}
                     </span>
-                    <span className="mt-1 block text-xs leading-5 text-[#a9c0d4]">{sample.description}</span>
-                    <span className="mt-3 flex flex-wrap gap-1.5">
-                      {sampleCuePreviews[sample.id].map((cue) => <span key={cue} className="rounded-full border border-[#41617d] bg-[#091b2d] px-2 py-1 text-[0.7rem] font-semibold leading-4 text-[#c5d8e9]">{cue}</span>)}
+                    <span className="sample-description">{sample.description}</span>
+                    <span className="sample-cues">
+                      {sampleCuePreviews[sample.id].map((cue) => <span key={cue}>{cue}</span>)}
                     </span>
-                    {isSelected && <span className="mt-3 block text-xs font-medium text-[#9df1dc]">Loaded below</span>}
+                    {isSelected && <span className="sample-loaded">Loaded below</span>}
                   </button>
                 );
               })}
@@ -107,16 +108,16 @@ export function EmailTriageForm({
           </fieldset>
         </div>
 
-        <div className="mt-6 grid gap-4">
+        <div className="form-fields">
           {fields.map((field) => {
             const isInvalid = errorField === field.key;
             const errorId = isInvalid ? "email-input-error" : undefined;
             const urlHelperId = field.key === "url" ? "url-verification-helper" : undefined;
             const describedBy = [errorId, urlHelperId].filter(Boolean).join(" ") || undefined;
-            const inputClassName = `min-h-12 min-w-0 rounded-xl border bg-[#091728] px-4 py-3 text-[#eef7ff] outline-none placeholder:text-[#66819b] focus-visible:border-[#66e3c4] focus-visible:ring-2 focus-visible:ring-[#66e3c4]/20 ${isInvalid ? "border-[#ffc879]" : "border-[#315272]"}`;
+            const inputClassName = `field-control ${isInvalid ? "is-invalid" : ""}`;
 
             return (
-              <label key={field.key} className="grid min-w-0 gap-2 text-sm font-medium text-[#d9e8f5]">
+              <label key={field.key} className="field-group">
                 {field.label}
                 {field.multiline ? (
                   <textarea
@@ -142,17 +143,17 @@ export function EmailTriageForm({
                     className={inputClassName}
                   />
                 )}
-                {field.key === "url" && <span id="url-verification-helper" className="text-xs font-normal leading-5 text-[#9bb0c5]">Paste a supplied URL only. Verify the destination independently rather than opening the link in the message.</span>}
+                {field.key === "url" && <span id="url-verification-helper" className="field-helper">Paste a supplied URL only. Verify the destination independently rather than opening the link in the message.</span>}
               </label>
             );
           })}
         </div>
 
-        {error && <p id="email-input-error" role="alert" className="mt-4 text-sm leading-6 text-[#ffc879]">{error}</p>}
-        <button type="submit" disabled={isAnalyzing} className="mt-6 min-h-12 w-full rounded-xl bg-[#66e3c4] px-5 py-3.5 font-semibold text-[#082019] transition hover:bg-[#8aefd5] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#66e3c4]/30 disabled:cursor-wait disabled:opacity-70 motion-reduce:transition-none">
+        {error && <p id="email-input-error" role="alert" className="form-error">{error}</p>}
+        <button type="submit" disabled={isAnalyzing} className="button-primary form-submit">
           {isAnalyzing ? "Reviewing observable cues locally…" : "Analyze observable signals"}
         </button>
-        {isAnalyzing && <p className="mt-3 text-sm leading-6 text-[#9ec6de]" role="status">Reviewing observable cues locally…</p>}
+        {isAnalyzing && <p className="form-status" role="status">Reviewing observable cues locally…</p>}
       </form>
     </section>
   );
