@@ -20,8 +20,8 @@
 - Integrated the official `groq-sdk` with the free Groq developer API and the open-weight `openai/gpt-oss-20b` model; no OpenAI API runtime call was added.
 - Added strict provider JSON Schema output, Zod validation, canonical-signal semantic checks, bounded input fields, prompt-injection boundaries, and no-store responses.
 - Added a best-effort in-memory per-instance demo limiter: 2 requests per IP per minute, 10 per IP per UTC day, and 50 live requests per UTC day across the instance. It is intentionally not globally durable across Vercel instances.
-- Added visibly labeled local static explanations for the three unchanged synthetic samples when live generation is unavailable or capped; custom text receives only the unavailable notice in that state.
-- Kept the no-URL-fetch, no-attachment-processing, no-storage, no-logging, no-authentication, no-analytics, and no-email-integration boundaries.
+- Added visibly labeled local static explanations for the three unchanged synthetic samples before a provider call could begin; later phases further tightened fallback truthfulness. Custom text receives only the unavailable notice in that state.
+- Phase C itself added no URL fetching, attachment processing, storage, logging, authentication, analytics, or email integration.
 - Codex with GPT-5.6 was used to build and test the project. The optional runtime AI explanation uses the free Groq developer API and the open-weight `openai/gpt-oss-20b` model. The deterministic browser-only engine remains canonical.
 
 ## July 18, 2026 — Phase D
@@ -36,3 +36,11 @@
 - Changed the Groq route authorization order so it validates bounded input and recomputes canonical local findings before session verification; non-admin requests return only public static-demo or unavailable behavior and never reach Groq, configuration checks, or capacity checks.
 - Added a quiet footer sign-in control and kept explicit consent immediately before every administrator-initiated Groq explanation.
 - Added no-network tests for the session helper, login limiter, same-origin guard, and public explanation route behavior. No public accounts, database, third-party authentication, analytics, persistence, URL fetching, or attachment processing were added.
+
+## July 19, 2026 — Final UI/UX refinement
+- Refined the first-run flow with a focused sample entry point, clearer sample selection, concise local-review status, and a calmer compact orientation sequence.
+- Strengthened evidence hierarchy so the local context, observable findings, observed evidence, why-it-matters teaching, and verification checklist are easier to read in order.
+- Improved keyboard focus handling for the sample entry point, validation errors, and narrow-screen report reveal; added responsive wrapping and reduced-motion support.
+- Kept the optional AI panel visually secondary to the deterministic local report while clarifying public, demo, unavailable, and authenticated administrator presentation states.
+- No backend, security, authorization, deterministic-analysis, Groq-behavior, rate-limit, session, environment, or privacy boundary changed.
+- Codex was used to implement, review, and verify this frontend refinement.
