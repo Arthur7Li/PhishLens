@@ -20,7 +20,7 @@
   --text: #1d2a3a;
   --heading: #102033;
   --muted: #56687a;
-  --quiet: #738192;
+  --quiet: #64748b;
   --line: #d5dfe7;
   --line-strong: #b9c7d2;
   --accent: #08756b;
@@ -324,7 +324,7 @@ a {
 
 .theme-control-option {
   display: inline-flex;
-  min-height: 2.2rem;
+  min-height: 2.75rem;
   align-items: center;
   gap: 0.3rem;
   padding: 0.38rem 0.52rem;
@@ -417,6 +417,11 @@ a {
 .site-main {
   min-width: 0;
   padding: clamp(2rem, 5vw, 4.8rem) 0 clamp(3rem, 6vw, 6rem);
+}
+
+.site-main:focus {
+  outline: 3px solid var(--focus);
+  outline-offset: 0.4rem;
 }
 
 .analyzer-section {
@@ -1232,6 +1237,12 @@ textarea.field-control {
   line-height: 1.55;
 }
 
+.ai-steps-list li,
+.ai-steps-list li > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .verification-card li > span:first-child,
 .ai-steps-list li > span:first-child {
   display: grid;
@@ -1350,6 +1361,7 @@ textarea.field-control {
 
 .ai-result-section > p {
   margin: 0.5rem 0 0;
+  overflow-wrap: anywhere;
   color: var(--muted);
   font-size: 0.86rem;
   line-height: 1.65;
@@ -1768,7 +1780,7 @@ textarea.field-control {
   }
 }
 
-@media (max-width: 860px) {
+@media (max-width: 1024px) {
   .site-header-desktop {
     display: none;
   }

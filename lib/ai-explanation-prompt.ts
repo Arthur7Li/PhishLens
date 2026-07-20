@@ -26,6 +26,18 @@ Security boundary:
 Write a concise educational summary, one explanation for each and only each local signal ID, and one to three safer next steps. Do not repeat quoted email text unless needed to explain a local finding.`;
 
 /**
+ * Serializes hostile email fields without allowing submitted angle brackets to
+ * create prompt delimiters. JSON unicode escapes preserve the field values if
+ * parsed while keeping the only literal XML-like markers under application
+ * control.
+ */
+function serializeUntrustedEmailFields(input: AiExplanationInput): string {
+  return JSON.stringify(input)
+    .replaceAll("<", "\\u003c")
+    .replaceAll(">", "\\u003e");
+}
+
+/**
  * Serializes hostile content as JSON inside clearly named data boundaries. JSON
  * escaping preserves the submitted text while making the source of every field
  * unambiguous to the model and to prompt-construction tests.
@@ -50,12 +62,13 @@ export function buildAiExplanationPrompt(
     nextSteps: analysis.nextSteps,
     learningNote: analysis.learningNote,
   };
+  const serializedInput = serializeUntrustedEmailFields(input);
 
   return {
     system: systemInstructions,
     user: [
       "<UNTRUSTED_EMAIL_FIELDS>",
-      JSON.stringify(input),
+      serializedInput,
       "</UNTRUSTED_EMAIL_FIELDS>",
       "<CANONICAL_LOCAL_DETERMINISTIC_FINDINGS>",
       JSON.stringify(canonicalFindings),

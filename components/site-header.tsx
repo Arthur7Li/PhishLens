@@ -6,7 +6,10 @@
  * keyboard and assistive-technology users without a custom menu state.
  */
 
+"use client";
+
 import { ExternalLink, Menu } from "lucide-react";
+import { useState } from "react";
 import { ThemeControl } from "@/components/theme-control";
 
 const navigationItems = [
@@ -17,11 +20,11 @@ const navigationItems = [
 ] as const;
 
 /** Shared anchor list used by both desktop and native mobile navigation. */
-function NavigationLinks({ className }: { className?: string }) {
+function NavigationLinks({ className, onNavigate }: { className?: string; onNavigate?: () => void }) {
   return (
     <nav className={className} aria-label="Primary navigation">
       {navigationItems.map((item) => (
-        <a key={item.href} href={item.href} className="site-nav-link">
+        <a key={item.href} href={item.href} className="site-nav-link" onClick={onNavigate}>
           {item.label}
         </a>
       ))}
@@ -30,6 +33,7 @@ function NavigationLinks({ className }: { className?: string }) {
         target="_blank"
         rel="noreferrer"
         className="site-nav-link site-nav-link-external"
+        onClick={onNavigate}
       >
         GitHub
         <ExternalLink aria-hidden="true" size={14} strokeWidth={1.8} />
@@ -40,6 +44,8 @@ function NavigationLinks({ className }: { className?: string }) {
 
 /** Renders the persistent product header and a skip link for keyboard readers. */
 export function SiteHeader() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
     <>
       <a className="skip-link" href="#main-content">
@@ -58,13 +64,17 @@ export function SiteHeader() {
             <ThemeControl />
           </div>
 
-          <details className="site-mobile-menu">
-            <summary aria-label="Open site navigation">
+          <details
+            className="site-mobile-menu"
+            open={isMobileMenuOpen}
+            onToggle={(event) => setIsMobileMenuOpen(event.currentTarget.open)}
+          >
+            <summary aria-label={isMobileMenuOpen ? "Close site navigation" : "Open site navigation"}>
               <Menu aria-hidden="true" size={20} strokeWidth={1.8} />
               <span>Menu</span>
             </summary>
             <div className="site-mobile-menu-panel">
-              <NavigationLinks className="site-mobile-nav-links" />
+              <NavigationLinks className="site-mobile-nav-links" onNavigate={() => setIsMobileMenuOpen(false)} />
               <div className="site-mobile-theme">
                 <p>Appearance</p>
                 <ThemeControl />

@@ -128,8 +128,36 @@ export const AI_EXPLANATION_JSON_SCHEMA: Record<string, unknown> = {
   },
 };
 
-const verdictPattern =
-  /\b(?:this|the)\s+(?:email|message)\s+(?:is|was|appears|seems|looks)\s+(?:definitively\s+|definitely\s+|certainly\s+)?(?:safe|malicious|phishing)\b|\b(?:definitively|definitely|certainly|confirmed|proven)\s+(?:safe|malicious|phishing)\b/i;
+const verdictTerms = "(?:safe|unsafe|malicious|phishing|legitimate|benign|trustworthy|fraudulent|scam)";
+
+/**
+ * Rejects clear verdict assertions rather than attempting to infer risk from
+ * free-form model prose. The optional explanation fails closed when a model
+ * labels the submitted message, even if it uses a negated or softened form.
+ */
+const prohibitedVerdictPatterns = [
+  new RegExp(
+    `\\b(?:this|the)\\s+(?:email|message)\\s+(?:is|was|appears|seems|looks|remains|isn't|wasn't)\\s+(?:not\\s+)?(?:a\\s+)?${verdictTerms}\\b`,
+    "i",
+  ),
+  new RegExp(
+    `\\bthis\\s+(?:is|was|appears|seems|looks|remains|isn't|wasn't)\\s+(?:not\\s+)?(?:a\\s+)?${verdictTerms}\\b`,
+    "i",
+  ),
+  new RegExp(
+    `\\b(?:this|the)\\s+(?:email|message)\\s+(?:has\\s+been\\s+)?(?:confirmed|proven|verified|determined)\\s+(?:to\\s+be\\s+)?(?:not\\s+)?(?:a\\s+)?${verdictTerms}\\b`,
+    "i",
+  ),
+  new RegExp(
+    `\\b(?:definitively|definitely|certainly|clearly|confirmed|proven)\\s+(?:not\\s+)?(?:a\\s+)?${verdictTerms}\\b`,
+    "i",
+  ),
+];
+
+/** Returns true when model prose crosses the non-verdict boundary. */
+function containsProhibitedVerdict(text: string): boolean {
+  return prohibitedVerdictPatterns.some((pattern) => pattern.test(text));
+}
 
 /**
  * Applies semantic checks that a JSON Schema cannot express. The model must
@@ -160,7 +188,7 @@ export function validateAiExplanation(
     ...parsed.data.suggestedNextSteps,
   ].join(" ");
 
-  if (verdictPattern.test(allText)) {
+  if (containsProhibitedVerdict(allText)) {
     return { success: false, error: "The model response attempted to make a prohibited verdict." };
   }
 

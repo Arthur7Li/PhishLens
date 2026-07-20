@@ -2,8 +2,9 @@
  * @file lib/static-demo-explanations.ts
  *
  * Local, pre-authored explanation fallbacks for the three synthetic samples.
- * These are returned only when live generation is unavailable or capped, and
- * their origin is always labeled separately by the API response contract.
+ * These are returned only before a provider attempt can begin (public mode,
+ * a missing key, or a local capacity guard), and their origin is always
+ * labeled separately by the API response contract.
  */
 
 import { analyzePhishingSignals } from "./phishing-signal-engine";
