@@ -1,7 +1,7 @@
 # PhishLens
 
 PhishLens is an educational, evidence-first phishing triage prototype for OpenAI Build Week’s **Developer Tools** category. It helps a reader identify observable cues in an email, understand why they matter, and select a safer next step—without declaring an email safe or malicious.
-[Deployment URL](https://phish-lens-doraemon7.vercel.app/) · [Repository](https://github.com/Arthur7Li/PhishLens) · [Report an issue](https://github.com/Arthur7Li/PhishLens/issues)
+[Deployment URL](https://phish-lens-self.vercel.app/) · [Repository](https://github.com/Arthur7Li/PhishLens) · [Report an issue](https://github.com/Arthur7Li/PhishLens/issues)
 
 Before sharing the deployment URL with judges, verify that Vercel Deployment Protection permits public access.
 
