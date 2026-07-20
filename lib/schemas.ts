@@ -41,6 +41,7 @@ export type SignalLevel = z.infer<typeof signalLevelSchema>;
 export const signalIdSchema = z.enum([
   "urgency",
   "credential-request",
+  "threat-loss-pressure",
   "payment-request",
   "authority-pressure",
   "generic-salutation-request",
@@ -76,6 +77,7 @@ export type AnalysisRiskLevel = z.infer<typeof analysisRiskLevelSchema>;
 
 /** Identifies a documented relationship between otherwise distinct local cues. */
 export const contextModifierIdSchema = z.enum([
+  "urgency-credential-loss-pressure-combination",
   "urgency-credential-combination",
   "urgency-payment-combination",
   "authority-sensitive-request-combination",

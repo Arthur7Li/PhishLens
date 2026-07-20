@@ -2,6 +2,7 @@
 
 import { describe, expect, it } from "vitest";
 import { analyzePhishingSignals } from "../phishing-signal-engine";
+import { fictionalUrgentAccountDetailsRegressionFixture } from "./regression-fixtures";
 import type { EmailInput } from "../schemas";
 
 const baseInput: EmailInput = {
@@ -12,6 +13,20 @@ const baseInput: EmailInput = {
 };
 
 describe("local context relationships", () => {
+  it("uses one non-stacking context note for the fictional urgent account-details regression fixture", () => {
+    const report = analyzePhishingSignals(fictionalUrgentAccountDetailsRegressionFixture);
+
+    expect(report.contextModifiers).toEqual([
+      expect.objectContaining({
+        id: "urgency-credential-loss-pressure-combination",
+        relatedSignalIds: ["urgency", "credential-request", "threat-loss-pressure"],
+        riskWeight: 1,
+      }),
+    ]);
+    expect(report.contextModifiers).toHaveLength(1);
+    expect(report.riskLevel).toBe("elevated");
+  });
+
   it("makes urgency plus a credential request explicit and raises local context by one transparent point", () => {
     const report = analyzePhishingSignals({ ...baseInput, body: "Urgent: confirm your password today." });
 
@@ -31,7 +46,7 @@ describe("local context relationships", () => {
 
     expect(report.contextModifiers).toHaveLength(1);
     expect(report.nextSteps).toEqual(expect.arrayContaining([
-      expect.stringContaining("passwords or account codes"),
+      expect.stringContaining("passwords, account codes, or requested account information"),
       expect.stringContaining("payment, bank-detail, gift-card, crypto, or wire"),
     ]));
   });

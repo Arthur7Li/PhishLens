@@ -2,6 +2,7 @@
 
 import { describe, expect, it } from "vitest";
 import { analyzePhishingSignals } from "../phishing-signal-engine";
+import { fictionalUrgentAccountDetailsRegressionFixture } from "./regression-fixtures";
 import type { EmailInput, SignalId } from "../schemas";
 
 const baseInput: EmailInput = {
@@ -36,9 +37,49 @@ describe("message-language signal families", () => {
     expect(ids({ body: "Verify your MFA code now." })).toContain("credential-request");
   });
 
+  it("records an account-details request only when local account-compromise or loss language corroborates it", () => {
+    const report = analyze(fictionalUrgentAccountDetailsRegressionFixture);
+
+    expect(report.signals.find((signal) => signal.id === "credential-request")).toMatchObject({
+      source: "body",
+      evidence: "“provide your account details”",
+      riskWeight: 2,
+    });
+  });
+
+  it("treats a direct request to act right now as an observable time-pressure cue", () => {
+    const report = analyze({ body: "Please lock it right now." });
+
+    expect(report.signals.find((signal) => signal.id === "urgency")).toMatchObject({
+      source: "body",
+      evidence: "“right now”",
+      riskWeight: 1,
+    });
+  });
+
   it("does not turn routine security guidance into a credential request", () => {
     expect(ids({ body: "Never share your password or recovery code in a message." })).not.toContain("credential-request");
     expect(ids({ body: "Do not click the sign-in link in an unexpected email." })).not.toContain("credential-request");
+  });
+
+  it("does not treat neutral support account-details language as a sensitive request or compound context", () => {
+    const report = analyze({
+      subject: "Support profile update",
+      body: "Please provide your account details so our support team can update your mailing preferences.",
+    });
+
+    expect(report.signals.map((signal) => signal.id)).not.toContain("credential-request");
+    expect(report.contextModifiers).toHaveLength(0);
+  });
+
+  it("records stated loss pressure with exact evidence", () => {
+    const report = analyze({ body: "Your money might be lost unless the issue is resolved." });
+
+    expect(report.signals.find((signal) => signal.id === "threat-loss-pressure")).toMatchObject({
+      source: "body",
+      evidence: "“Your money might be lost”",
+      riskWeight: 1,
+    });
   });
 
   it("covers explicit payment, gift-card, crypto, and wire-transfer requests", () => {

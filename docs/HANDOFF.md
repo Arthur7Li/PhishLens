@@ -24,7 +24,7 @@ After an administrator signs in, every live request still requires a fresh **Gen
 
 | Area | Ownership |
 | --- | --- |
-| `app/page.tsx`, `components/` | Single-page presentation, local-analysis interaction, source labels, themes, accessibility, and the discreet admin control. |
+| `app/page.tsx`, `components/`, `lib/local-analysis-flow.ts` | Single-page presentation, current-input local-analysis interaction, source labels, themes, accessibility, and the discreet admin control. |
 | `app/api/ai-explanation/route.ts` | Same-origin opt-in explanation route, authoritative server recomputation, public fallback, admin gate, no-store responses, and provider failure truthfulness. |
 | `app/api/admin/login/route.ts`, `app/api/admin/logout/route.ts` | Single-admin sign-in/sign-out routes and session cookie lifecycle. |
 | `lib/signal-rules.ts`, `lib/phishing-signal-engine.ts`, `lib/schemas.ts` | Canonical browser/server deterministic rule entry point, context calculation, report types, and input contracts. |
@@ -36,7 +36,7 @@ After an administrator signs in, every live request still requires a fresh **Gen
 
 ### Deterministic rule architecture and change procedure
 
-`message-rules.ts` covers pressure, explicit credential/payment requests, conditional authority/greeting and lure context, and visible risky-file references. `domain-rules.ts` covers conservative sender-address/domain observations, URL presence, one highest-priority URL-structure observation, and conservative comparable-domain differences. `context.ts` turns at most one documented pair of distinct findings into a transparent context modifier and selects the verification checklist.
+`message-rules.ts` covers pressure, explicit credential/payment requests, corroborated account-detail requests, stated loss pressure, conditional authority/greeting and lure context, and visible risky-file references. `domain-rules.ts` covers conservative sender-address/domain observations, URL presence, one highest-priority URL-structure observation, and conservative comparable-domain differences. `context.ts` turns at most one documented pair or three-cue combination of distinct findings into a transparent context modifier and selects the verification checklist.
 
 When adding a rule, keep it browser-compatible and pure; require exact pasted evidence; return one stable ID; explain why the cue merits verification without claiming intent; and avoid overlapping findings unless the UI can explain the distinct reason. Add its ID to `lib/schemas.ts`, the optional AI allowlist, and the static-demo guidance map when needed. Add synthetic positive, routine counterexample, malformed-input, deduplication, and shared browser/server-contract tests before updating public documentation.
 

@@ -14,9 +14,9 @@ import { AnalysisReport } from "@/components/analysis-report";
 import { AiExplanationPanel } from "@/components/ai-explanation-panel";
 import { EmailTriageForm } from "@/components/email-triage-form";
 import { SafetyNotice } from "@/components/safety-notice";
-import { analyzePhishingSignals } from "@/lib/phishing-signal-engine";
+import { runCurrentLocalAnalysis } from "@/lib/local-analysis-flow";
 import { sampleEmails } from "@/lib/sample-emails";
-import { emailInputSchema, type Analysis, type EmailInput, type SampleEmail } from "@/lib/schemas";
+import { type Analysis, type EmailInput, type SampleEmail } from "@/lib/schemas";
 
 const emptyInput: EmailInput = { sender: "", subject: "", body: "", url: "" };
 
@@ -24,11 +24,6 @@ type TriageWorkspaceProps = {
   /** Server-verified state used only to tailor the optional explanation panel. */
   isAdminAuthenticated: boolean;
 };
-
-/** Returns a valid email field key only when Zod points at one of the visible controls. */
-function toEmailInputField(value: unknown): keyof EmailInput | null {
-  return value === "sender" || value === "subject" || value === "body" || value === "url" ? value : null;
-}
 
 /** Coordinates local form state, deterministic scheduling, and report-focused keyboard flow. */
 export function TriageWorkspace({ isAdminAuthenticated }: TriageWorkspaceProps) {
@@ -41,11 +36,14 @@ export function TriageWorkspace({ isAdminAuthenticated }: TriageWorkspaceProps) 
   const [error, setError] = useState<string | null>(null);
   const [errorField, setErrorField] = useState<keyof EmailInput | null>(null);
   const analysisFrameRef = useRef<number | null>(null);
+  const analysisRequestRef = useRef(0);
   const sampleSelectorRef = useRef<HTMLDivElement>(null);
   const reportHeadingRef = useRef<HTMLHeadingElement>(null);
 
   /** Cancels a queued local render when the user changes course before it runs. */
   const cancelPendingAnalysis = () => {
+    analysisRequestRef.current += 1;
+
     if (analysisFrameRef.current !== null) {
       window.cancelAnimationFrame(analysisFrameRef.current);
       analysisFrameRef.current = null;
@@ -87,26 +85,30 @@ export function TriageWorkspace({ isAdminAuthenticated }: TriageWorkspaceProps) 
 
   /** Validates immediately, then yields one browser frame so the local status can be announced honestly. */
   const handleAnalyze = (): keyof EmailInput | null => {
-    const parsed = emailInputSchema.safeParse(input);
+    const attempt = runCurrentLocalAnalysis(input);
 
-    if (!parsed.success) {
-      const field = toEmailInputField(parsed.error.issues[0]?.path[0]);
-      setError(parsed.error.issues[0]?.message ?? "Please complete the form.");
-      setErrorField(field);
-      return field;
+    if (!attempt.success) {
+      setError(attempt.error);
+      setErrorField(attempt.errorField);
+      return attempt.errorField;
     }
 
     cancelPendingAnalysis();
     setError(null);
     setErrorField(null);
     setIsAnalyzing(true);
+    const requestId = analysisRequestRef.current;
 
     // This is not a delay or remote request. Scheduling one frame lets the
     // browser paint the truthful local-review status before rendering the report.
     analysisFrameRef.current = window.requestAnimationFrame(() => {
+      // A field edit or another submit invalidates this frame. This keeps a
+      // prior report from replacing the result of the current Analyze action.
+      if (requestId !== analysisRequestRef.current) return;
+
       const shouldFocusOnNarrowScreen = window.matchMedia("(max-width: 767px)").matches;
 
-      setAnalysis(analyzePhishingSignals(parsed.data));
+      setAnalysis(attempt.analysis);
       setAnalysisVersion((current) => current + 1);
       setFocusReportOnReveal(shouldFocusOnNarrowScreen);
       setIsAnalyzing(false);

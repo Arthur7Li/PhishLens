@@ -56,14 +56,16 @@ npm run build
 2. Select **Account review request**, then choose **Analyze observable signals**. Confirm the report shows account-access pressure, a credential request, a sender-domain character cue, and the supplied URL without claiming intent.
 3. Select **Overdue invoice notice**. Confirm the report shows payment pressure, the supplied URL, and the explicit time-pressure/payment combination note without claiming phishing certainty.
 4. Select **Routine team update**. Confirm the report says no configured cues are shown and explicitly says that absence is not a safety verdict.
-5. With otherwise routine text, enter `https://harbor-studio.example/notes`. Confirm the supplied URL appears as an informational URL observation and the headline says an informational observation is available for independent verification.
-6. After any local report, confirm the optional explanation panel explains that local findings remain canonical. In public mode, it states that custom input never reaches Groq and live Groq explanation requires administrator access.
-7. As a public visitor, use each unchanged synthetic sample and choose **Check available explanation**. Confirm the visible label says: “Demo explanation based on PhishLens’ local rules — no content was sent to Groq.”
-8. As a public visitor, enter custom text, analyze it, and choose **Check available explanation**. Confirm the only explanation result says: “Live AI explanation is unavailable in this public demo. Your local deterministic report remains available.”
-9. Edit any field and verify the result and any explanation clear; press Analyze again and confirm the local deterministic report appears.
-10. Use Tab, Enter, and Space to select examples, move through the form, submit the analysis, and reach the optional explanation button. Confirm focus is always visible and the validation error identifies its field.
-11. At 320 px, 375 px, and 768 px viewport widths, confirm there is no horizontal scrolling and controls remain readable and usable.
-12. Verify the educational, privacy, and non-definitive-verdict notices are visible before and after analysis.
+5. Enter the fictional regression fields `R8C@gmail.com`, `Account security alert`, and `Unknown sign in detected to your account. Please provide your account details to lock it right now. Or your money might be lost!!!`, with no URL. Confirm the report shows time pressure, a credential or account-information request, threat/loss-pressure language, and one combined local-context note. It must not draw a conclusion about the sender or email.
+6. Edit the same body to neutral support wording such as `Please provide your account details so our support team can update your mailing preferences.` Confirm it does not create the credential finding or the combined local-context note.
+7. With otherwise routine text, enter `https://harbor-studio.example/notes`. Confirm the supplied URL appears as an informational URL observation and the headline says an informational observation is available for independent verification.
+8. After any local report, confirm the optional explanation panel explains that local findings remain canonical. In public mode, it states that custom input never reaches Groq and live Groq explanation requires administrator access.
+9. As a public visitor, use each unchanged synthetic sample and choose **Check available explanation**. Confirm the visible label says: “Demo explanation based on PhishLens’ local rules — no content was sent to Groq.”
+10. As a public visitor, enter custom text, analyze it, and choose **Check available explanation**. Confirm the only explanation result says: “Live AI explanation is unavailable in this public demo. Your local deterministic report remains available.”
+11. Edit any field and verify the result and any explanation clear; press Analyze again and confirm the local deterministic report appears.
+12. Use Tab, Enter, and Space to select examples, move through the form, submit the analysis, and reach the optional explanation button. Confirm focus is always visible and the validation error identifies its field.
+13. At 320 px, 375 px, and 768 px viewport widths, confirm there is no horizontal scrolling and controls remain readable and usable.
+14. Verify the educational, privacy, and non-definitive-verdict notices are visible before and after analysis.
 
 ### Product-site checks
 
@@ -77,7 +79,7 @@ The browser-local evaluator is the canonical report used by both the browser and
 
 It currently covers:
 
-- time pressure, stated consequences, credential/authentication requests, and financial requests;
+- time pressure, stated consequences or loss pressure, credential/authentication requests, and financial requests; account-detail requests require an accompanying local account-compromise or financial-loss claim rather than matching neutral support wording alone;
 - authority or generic-salutation language only when paired with pressure or a sensitive request;
 - account restriction, refund, reward, and prize language only when paired with a request or pressure;
 - a referenced high-risk file extension only when the message text asks the reader to open or download it—no attachment is opened or inspected;
@@ -85,7 +87,7 @@ It currently covers:
 - URL presence as a zero-weight informational observation, plus at most one local URL-structure detail (for example user-information text, an IP host, punycode, an unusual port, HTTP, deep subdomains, or encoded host text); and
 - conservative sender/supplied-URL comparable-domain differences.
 
-The report can add one documented combination point for time pressure paired with a credential or financial request, or authority language paired with a sensitive request. This relationship is shown in the report rather than hidden in a score. URL presence alone remains informational and cannot raise local context by itself.
+The report can add one documented combination point for time pressure paired with a credential or financial request, including a distinct loss-pressure combination when it is present, or authority language paired with a sensitive request. This relationship is shown in the report rather than hidden in a score. URL presence alone remains informational and cannot raise local context by itself.
 
 These are limited, synthetic-fixture-tested heuristics for pasted text. They do not inspect authenticated email headers, sender reputation, URL reputation or destinations, attachments, inbox history, or external context. A local observation does not establish identity, intent, or a definitive outcome.
 

@@ -79,3 +79,11 @@
 - Verified `npm run lint`, `npm run typecheck`, `npm run test` (14 files, 71 tests), and `npm run build` successfully.
 - No external APIs, URL fetching, DNS lookups, attachment processing, inbox access, storage, telemetry, authentication behavior, sessions, rate limits, environment variables, consent boundaries, fallback truthfulness, or provider/model choice changed.
 - Codex was used to implement, review, and verify this bounded deterministic-engine upgrade.
+
+## July 20, 2026 — P0 deterministic-analysis false-negative correction
+
+- Reproduced and corrected a fictional regression case containing an account-security claim, an urgent request for account details, and a stated risk of financial loss. The local evaluator now records the three distinct observable cues with exact pasted evidence and one transparent, non-stacking combination note.
+- Kept account-detail matching deliberately narrow: neutral support/profile-update wording alone does not create a credential finding or raised combination context.
+- Added a named fictional regression fixture; focused urgency, credential-adjacent request, loss-pressure, combination, current-input rerun, and browser/server-normalization equivalence tests.
+- Added an explicit current-input analysis helper and invalidation token around the one-frame local render, preventing a canceled or earlier scheduled report from replacing the result of a later Analyze action.
+- No external services, URL fetching, attachment handling, inbox access, storage, telemetry, AI-provider behavior, authorization, session handling, rate limits, privacy boundaries, or verdict behavior changed.

@@ -109,6 +109,7 @@ export const AI_EXPLANATION_JSON_SCHEMA: Record<string, unknown> = {
             enum: [
               "urgency",
               "credential-request",
+              "threat-loss-pressure",
               "payment-request",
               "authority-pressure",
               "generic-salutation-request",

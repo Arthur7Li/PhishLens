@@ -7,6 +7,7 @@ import {
   validateAiExplanation,
 } from "./ai-explanation-schema";
 import { analyzePhishingSignals } from "./phishing-signal-engine";
+import { fictionalUrgentAccountDetailsRegressionFixture } from "./deterministic-analysis/regression-fixtures";
 import { sampleEmails } from "./sample-emails";
 
 const analysis = analyzePhishingSignals(sampleEmails[0]);
@@ -55,6 +56,21 @@ describe("optional AI explanation schemas", () => {
     expect(expandedAnalysis.signals.length).toBeLessThanOrEqual(12);
     expect(aiExplanationSchema.safeParse(explanation).success).toBe(true);
     expect(validateAiExplanation(explanation, expandedAnalysis)).toMatchObject({ success: true });
+  });
+
+  it("keeps the P0 loss-pressure finding inside the strict local-signal allowlist", () => {
+    const regressionAnalysis = analyzePhishingSignals(fictionalUrgentAccountDetailsRegressionFixture);
+    const explanation = {
+      educationalSummary: "The local report shows observable patterns that support an independent verification step.",
+      signalExplanations: regressionAnalysis.signals.map((signal) => ({
+        signalId: signal.id,
+        explanation: `This explanation discusses the local ${signal.id} finding without changing it.`,
+      })),
+      suggestedNextSteps: ["Use an independently found account or support route to verify the claim."],
+    };
+
+    expect(regressionAnalysis.signals.map((signal) => signal.id)).toContain("threat-loss-pressure");
+    expect(validateAiExplanation(explanation, regressionAnalysis)).toMatchObject({ success: true });
   });
 
   it("rejects duplicate, missing, or invented signal explanations", () => {

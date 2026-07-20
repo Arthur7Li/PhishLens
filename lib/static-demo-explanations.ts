@@ -14,7 +14,8 @@ import type { AiExplanation } from "./ai-explanation-schema";
 
 const signalGuidance: Record<AiExplanation["signalExplanations"][number]["signalId"], string> = {
   urgency: "Time-sensitive wording can make it harder to pause. Use a known contact path before acting on an unexpected deadline.",
-  "credential-request": "Requests for a password or account code should be checked through the service's known website or support channel before sharing information.",
+  "credential-request": "Requests for a password, account code, or account information should be checked through the service's known website or support channel before sharing information.",
+  "threat-loss-pressure": "Language about losing money, access, or data can pressure a quick response. Check the claim through an independently found account or support route.",
   "payment-request": "Payment or billing requests are worth confirming against a vendor record or a known billing portal before entering financial details.",
   "authority-pressure": "A claimed authority role is paired with a request, so checking through a known organization channel is useful before acting.",
   "generic-salutation-request": "A broad greeting paired with a request is a detail to verify independently; it does not establish who sent the message.",

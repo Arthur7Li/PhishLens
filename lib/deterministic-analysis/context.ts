@@ -12,6 +12,16 @@ import type { ContextModifier, SignalFinding } from "../schemas";
 export function getContextModifiers(signals: readonly SignalFinding[]): ContextModifier[] {
   const ids = new Set(signals.map((signal) => signal.id));
 
+  if (ids.has("urgency") && ids.has("credential-request") && ids.has("threat-loss-pressure")) {
+    return [{
+      id: "urgency-credential-loss-pressure-combination",
+      title: "Time pressure and an account-detail request tied to stated loss",
+      explanation: "The local report shows time pressure, a request for account information, and language about a stated loss. Seeing these distinct cues together is why the overall local context is raised by one additional transparent point; use an independently found account or support route to verify the claim.",
+      relatedSignalIds: ["urgency", "credential-request", "threat-loss-pressure"],
+      riskWeight: 1,
+    }];
+  }
+
   if (ids.has("urgency") && ids.has("credential-request")) {
     return [{
       id: "urgency-credential-combination",
@@ -53,7 +63,11 @@ export function getVerificationSteps(signals: readonly SignalFinding[]): string[
   const steps: string[] = [];
 
   if (ids.has("credential-request")) {
-    steps.push("Do not share passwords or account codes through the message; open the organization’s known sign-in route yourself.");
+    steps.push("Do not share passwords, account codes, or requested account information through the message; open the organization’s known sign-in route yourself.");
+  }
+
+  if (ids.has("threat-loss-pressure")) {
+    steps.push("Do not react through the message to a stated loss or account-access consequence; use an independently found account or support route to verify it.");
   }
 
   if (ids.has("payment-request")) {

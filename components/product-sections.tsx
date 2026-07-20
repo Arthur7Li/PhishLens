@@ -55,7 +55,7 @@ const signalCategories = [
   },
   {
     title: "Credential and authentication requests",
-    copy: "Requests for passwords, account codes, recovery codes, or an authentication link are shown with their exact text evidence.",
+    copy: "Requests for passwords, account codes, recovery codes, authentication links, or corroborated account details are shown with their exact text evidence.",
   },
   {
     title: "Financial requests",

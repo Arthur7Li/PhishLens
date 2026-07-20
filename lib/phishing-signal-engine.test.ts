@@ -6,9 +6,11 @@
  */
 
 import { describe, expect, it, vi } from "vitest";
+import { aiExplanationInputSchema } from "./ai-explanation-schema";
+import { fictionalUrgentAccountDetailsRegressionFixture } from "./deterministic-analysis/regression-fixtures";
 import { analyzePhishingSignals } from "./phishing-signal-engine";
 import { sampleEmails } from "./sample-emails";
-import { analysisSchema, type EmailInput } from "./schemas";
+import { analysisSchema, emailInputSchema, type EmailInput } from "./schemas";
 
 const baseInput: EmailInput = {
   sender: "Jordan Lee <jordan@harbor-studio.example>",
@@ -100,6 +102,27 @@ describe("analyzePhishingSignals", () => {
 
     expect(browserResult).toEqual(serverRecomputation);
     expect(analysisSchema.safeParse(browserResult).success).toBe(true);
+  });
+
+  it("returns the same canonical report for browser and server normalization of the fictional urgent-account fixture", () => {
+    const browserInput = emailInputSchema.parse(fictionalUrgentAccountDetailsRegressionFixture);
+    const serverInput = aiExplanationInputSchema.parse(fictionalUrgentAccountDetailsRegressionFixture);
+    const browserResult = analyzePhishingSignals(browserInput);
+    const serverRecomputation = analyzePhishingSignals(serverInput);
+
+    expect(browserResult).toEqual(serverRecomputation);
+    expect(browserResult.signals.map((signal) => signal.id)).toEqual([
+      "urgency",
+      "credential-request",
+      "threat-loss-pressure",
+    ]);
+    expect(browserResult.contextModifiers).toEqual([
+      expect.objectContaining({
+        id: "urgency-credential-loss-pressure-combination",
+        relatedSignalIds: ["urgency", "credential-request", "threat-loss-pressure"],
+      }),
+    ]);
+    expect(browserResult.signals.map((signal) => signal.id)).not.toContain("lookalike-domain");
   });
 
   it("does not treat an absence of configured signals as proof of safety", () => {
