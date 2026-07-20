@@ -6,9 +6,11 @@
  */
 
 import { describe, expect, it, vi } from "vitest";
+import { aiExplanationInputSchema } from "./ai-explanation-schema";
+import { fictionalUrgentAccountDetailsRegressionFixture } from "./deterministic-analysis/regression-fixtures";
 import { analyzePhishingSignals } from "./phishing-signal-engine";
 import { sampleEmails } from "./sample-emails";
-import type { EmailInput } from "./schemas";
+import { analysisSchema, emailInputSchema, type EmailInput } from "./schemas";
 
 const baseInput: EmailInput = {
   sender: "Jordan Lee <jordan@harbor-studio.example>",
@@ -93,11 +95,42 @@ describe("analyzePhishingSignals", () => {
     expect(input).toEqual(before);
   });
 
+  it("uses one shared, schema-valid report for browser and server recomputation", () => {
+    const input = makeInput({ body: "Urgent: confirm your password today.", url: "https://harbor-studio.example/login" });
+    const browserResult = analyzePhishingSignals(input);
+    const serverRecomputation = analyzePhishingSignals(structuredClone(input));
+
+    expect(browserResult).toEqual(serverRecomputation);
+    expect(analysisSchema.safeParse(browserResult).success).toBe(true);
+  });
+
+  it("returns the same canonical report for browser and server normalization of the fictional urgent-account fixture", () => {
+    const browserInput = emailInputSchema.parse(fictionalUrgentAccountDetailsRegressionFixture);
+    const serverInput = aiExplanationInputSchema.parse(fictionalUrgentAccountDetailsRegressionFixture);
+    const browserResult = analyzePhishingSignals(browserInput);
+    const serverRecomputation = analyzePhishingSignals(serverInput);
+
+    expect(browserResult).toEqual(serverRecomputation);
+    expect(browserResult.signals.map((signal) => signal.id)).toEqual([
+      "urgency",
+      "credential-request",
+      "threat-loss-pressure",
+    ]);
+    expect(browserResult.contextModifiers).toEqual([
+      expect.objectContaining({
+        id: "urgency-credential-loss-pressure-combination",
+        relatedSignalIds: ["urgency", "credential-request", "threat-loss-pressure"],
+      }),
+    ]);
+    expect(browserResult.signals.map((signal) => signal.id)).not.toContain("lookalike-domain");
+  });
+
   it("does not treat an absence of configured signals as proof of safety", () => {
     const report = analyzePhishingSignals(baseInput);
 
     expect(report.signals).toHaveLength(0);
     expect(report.riskLevel).toBe("informational");
     expect(`${report.headline} ${report.summary}`.toLowerCase()).not.toContain("the email is safe");
+    expect(`${report.headline} ${report.summary}`.toLowerCase()).not.toContain("detected");
   });
 });

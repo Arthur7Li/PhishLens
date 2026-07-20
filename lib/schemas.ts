@@ -41,10 +41,18 @@ export type SignalLevel = z.infer<typeof signalLevelSchema>;
 export const signalIdSchema = z.enum([
   "urgency",
   "credential-request",
+  "threat-loss-pressure",
   "payment-request",
+  "authority-pressure",
+  "generic-salutation-request",
+  "account-or-reward-lure",
   "lookalike-domain",
+  "internationalized-sender-domain",
+  "malformed-sender-address",
   "provided-url",
+  "url-structure",
   "sender-url-mismatch",
+  "risky-attachment-reference",
 ]);
 export type SignalId = z.infer<typeof signalIdSchema>;
 
@@ -67,11 +75,34 @@ export type SignalFinding = z.infer<typeof signalSchema>;
 export const analysisRiskLevelSchema = z.enum(["informational", "caution", "review", "elevated"]);
 export type AnalysisRiskLevel = z.infer<typeof analysisRiskLevelSchema>;
 
+/** Identifies a documented relationship between otherwise distinct local cues. */
+export const contextModifierIdSchema = z.enum([
+  "urgency-credential-loss-pressure-combination",
+  "urgency-credential-combination",
+  "urgency-payment-combination",
+  "authority-sensitive-request-combination",
+]);
+export type ContextModifierId = z.infer<typeof contextModifierIdSchema>;
+
+/**
+ * A small, explainable context adjustment. It never creates a new finding or
+ * verdict: it documents why a particular combination deserves extra care.
+ */
+export const contextModifierSchema = z.object({
+  id: contextModifierIdSchema,
+  title: z.string(),
+  explanation: z.string(),
+  relatedSignalIds: z.array(signalIdSchema).min(2).max(3),
+  riskWeight: z.literal(1),
+});
+export type ContextModifier = z.infer<typeof contextModifierSchema>;
+
 export const analysisSchema = z.object({
   riskLevel: analysisRiskLevelSchema,
   headline: z.string(),
   summary: z.string(),
   signals: z.array(signalSchema),
+  contextModifiers: z.array(contextModifierSchema),
   nextSteps: z.array(z.string()),
   learningNote: z.string(),
 });

@@ -28,5 +28,6 @@ Use the [Issues page](https://github.com/Arthur7Li/PhishLens/issues) for bugs or
 
 - Local deterministic analysis is canonical.
 - An optional AI explanation must not override local findings.
+- When changing a deterministic rule, add synthetic positive, routine counterexample, malformed-input, and shared browser/server-contract coverage; update the public rule documentation in the same change.
 - Do not add URL fetching, attachment handling, inbox access, retention, telemetry, public accounts, external integrations, or definitive safe/malicious claims without an explicitly approved redesign.
 - Preserve public-versus-admin Groq behavior and all consent, privacy, and server authorization boundaries.

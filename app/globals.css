@@ -1004,6 +1004,29 @@ textarea.field-control {
   color: inherit;
 }
 
+.context-modifier-card {
+  margin-top: 0.85rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  background: var(--surface-subtle);
+}
+
+.context-modifier-card h3 {
+  margin: 0.3rem 0 0;
+  color: var(--heading);
+  font-size: 0.94rem;
+  font-weight: 760;
+}
+
+.context-modifier-card h3 + p {
+  margin: 0.36rem 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
 .context-value {
   margin-top: 0.22rem;
   font-size: 1.14rem;

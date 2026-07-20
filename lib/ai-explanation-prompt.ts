@@ -59,6 +59,7 @@ export function buildAiExplanationPrompt(
       level,
       riskWeight,
     })),
+    contextModifiers: analysis.contextModifiers,
     nextSteps: analysis.nextSteps,
     learningNote: analysis.learningNote,
   };

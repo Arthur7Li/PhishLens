@@ -66,3 +66,24 @@
 - Verified `npm run lint`, `npm run typecheck`, `npm run test` (11 files, 41 tests), and `npm run build` successfully.
 - No deterministic signal rules, risk/context behavior, API route order, public-versus-admin authorization decision, session settings, provider/model choice, rate limits, environment-variable contract, storage behavior, or URL/attachment/inbox boundary changed.
 - Codex was used to inspect, harden, document, and verify this release-candidate refinement.
+
+## July 20, 2026 — Deterministic analysis security-engineering upgrade
+
+- Refactored the shared browser/server local evaluator into focused evidence, message-language, sender/URL, context, and rule-composition modules without adding network behavior or runtime dependencies.
+- Expanded conservative, evidence-backed local observations for explicit pressure, credential/authentication requests, financial requests, conditional authority/greeting and account-or-reward context, visible high-risk filename references, sender-address/domain structure, and one supplied-URL structure detail.
+- Kept supplied URL presence informational with zero weight. URL rules inspect only pasted lexical/structural text; they do not fetch, open, resolve, or assess the destination.
+- Added one documented combination adjustment for time pressure paired with a credential/payment request or authority language paired with a sensitive request, plus verification steps selected from the observed cue families.
+- Expanded the shared signal-ID contract and optional explanation allowlist so server-recomputed findings remain canonical; the optional prompt now receives the same explicit local context modifier.
+- Added synthetic no-network coverage for positive, routine counterexample, Unicode/punycode, malformed-input, URL parsing, sender/URL comparison, deduplication, combination, static fallback, AI allowlist, and browser/server shared-contract behavior.
+- Updated the README, handoff guide, contributor guidance, sample previews, product-site rule summary, and report presentation to match the new local-only rule architecture and limitations.
+- Verified `npm run lint`, `npm run typecheck`, `npm run test` (14 files, 71 tests), and `npm run build` successfully.
+- No external APIs, URL fetching, DNS lookups, attachment processing, inbox access, storage, telemetry, authentication behavior, sessions, rate limits, environment variables, consent boundaries, fallback truthfulness, or provider/model choice changed.
+- Codex was used to implement, review, and verify this bounded deterministic-engine upgrade.
+
+## July 20, 2026 — P0 deterministic-analysis false-negative correction
+
+- Reproduced and corrected a fictional regression case containing an account-security claim, an urgent request for account details, and a stated risk of financial loss. The local evaluator now records the three distinct observable cues with exact pasted evidence and one transparent, non-stacking combination note.
+- Kept account-detail matching deliberately narrow: neutral support/profile-update wording alone does not create a credential finding or raised combination context.
+- Added a named fictional regression fixture; focused urgency, credential-adjacent request, loss-pressure, combination, current-input rerun, and browser/server-normalization equivalence tests.
+- Added an explicit current-input analysis helper and invalidation token around the one-frame local render, preventing a canceled or earlier scheduled report from replacing the result of a later Analyze action.
+- No external services, URL fetching, attachment handling, inbox access, storage, telemetry, AI-provider behavior, authorization, session handling, rate limits, privacy boundaries, or verdict behavior changed.

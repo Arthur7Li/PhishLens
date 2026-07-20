@@ -61,7 +61,7 @@ function ExplanationContent({ result, analysis }: { result: AiExplanationRespons
         </div>
       )}
       <div className="ai-result-section">
-        <h3>Suggested safer next steps</h3>
+        <h3>Suggested verification steps</h3>
         <ol className="ai-steps-list">
           {result.explanation.suggestedNextSteps.map((step, index) => (
             <li key={step}>

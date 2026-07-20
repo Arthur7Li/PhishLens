@@ -51,13 +51,13 @@ const sourceLabels: Record<SignalFinding["source"], string> = {
   url: "Supplied URL",
 };
 
-/** Uses the existing zero weight to distinguish URL context without changing a rule or result. */
+/** Uses zero weight to distinguish an informational observation from a context-raising cue. */
 function getSignalPresentation(signal: SignalFinding) {
   if (signal.riskWeight === 0) {
     return {
-      label: "Informational URL cue",
+      label: signal.source === "url" ? "Informational URL observation" : "Informational observation",
       marker: "i",
-      description: "Does not raise overall local context.",
+      description: "Does not raise overall local context on its own.",
       className: "tone-info",
     };
   }
@@ -115,6 +115,18 @@ export function AnalysisReport({ analysis, isAnalyzing, reportHeadingRef }: Anal
         <p className="finding-count">{findingCount}</p>
       </div>
 
+      {analysis.contextModifiers.length > 0 && (
+        <div className="context-modifier-card">
+          <p className="section-label">Combined local context</p>
+          {analysis.contextModifiers.map((modifier) => (
+            <div key={modifier.id}>
+              <h3>{modifier.title}</h3>
+              <p>{modifier.explanation}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="report-findings">
         <div className="report-section-heading">
           <div>
@@ -163,7 +175,7 @@ export function AnalysisReport({ analysis, isAnalyzing, reportHeadingRef }: Anal
 
       <div className="report-guidance-grid">
         <div className="verification-card">
-          <p className="section-label">Safer next action</p>
+          <p className="section-label">Independent next action</p>
           <h3>Verification checklist</h3>
           <p>Use an independent route to verify the request rather than a link or contact detail supplied in the message.</p>
           <ol>

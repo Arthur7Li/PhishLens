@@ -50,7 +50,7 @@ export const aiExplanationSchema = z
           })
           .strict(),
       )
-      .max(6),
+      .max(12),
     suggestedNextSteps: z.array(z.string().trim().min(1).max(220)).min(1).max(3),
   })
   .strict();
@@ -98,7 +98,7 @@ export const AI_EXPLANATION_JSON_SCHEMA: Record<string, unknown> = {
     educationalSummary: { type: "string" },
     signalExplanations: {
       type: "array",
-      maxItems: 6,
+      maxItems: 12,
       items: {
         type: "object",
         additionalProperties: false,
@@ -109,10 +109,18 @@ export const AI_EXPLANATION_JSON_SCHEMA: Record<string, unknown> = {
             enum: [
               "urgency",
               "credential-request",
+              "threat-loss-pressure",
               "payment-request",
+              "authority-pressure",
+              "generic-salutation-request",
+              "account-or-reward-lure",
               "lookalike-domain",
+              "internationalized-sender-domain",
+              "malformed-sender-address",
               "provided-url",
+              "url-structure",
               "sender-url-mismatch",
+              "risky-attachment-reference",
             ],
           },
           explanation: { type: "string" },
