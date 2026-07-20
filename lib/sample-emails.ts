@@ -6,8 +6,8 @@
  * Each entry is a `SampleEmail` (an `EmailInput` extended with UI metadata).
  * The three samples cover the three main instructional scenarios:
  *
- * 1. `account-review`  – urgency + look-alike sender domain + credential request
- * 2. `invoice-alert`   – payment pressure + unfamiliar destination link
+ * 1. `account-review`  – account-access pressure + look-alike sender domain + credential request
+ * 2. `invoice-alert`   – payment pressure + supplied URL
  * 3. `team-update`     – routine, low-signal message that still warrants verification
  *
  * Every address and domain uses the `.example` TLD (RFC 2606 reserved) so that
@@ -24,7 +24,7 @@ export const sampleEmails: SampleEmail[] = [
   {
     id: "account-review",
     label: "Account review request",
-    description: "Synthetic example with urgency and a mismatched-looking sender.",
+    description: "Synthetic example with account pressure, a credential request, and a domain character cue.",
     sender: "Microsoft Account <account-security@micros0ft-verify.example>",
     subject: "Action required: account access will be limited today",
     body: "We noticed unusual sign-in activity. Review your account within 30 minutes to prevent a temporary restriction. Use the secure portal below to confirm your password.",
@@ -33,7 +33,7 @@ export const sampleEmails: SampleEmail[] = [
   {
     id: "invoice-alert",
     label: "Overdue invoice notice",
-    description: "Synthetic example with a payment request and unfamiliar link.",
+    description: "Synthetic example with a payment request and a supplied URL.",
     sender: "Billing Department <invoices@northstar-payments.example>",
     subject: "Final notice — invoice 004821 is now overdue",
     body: "Your outstanding balance requires immediate payment to avoid service interruption. Open the payment center and enter your billing details today.",

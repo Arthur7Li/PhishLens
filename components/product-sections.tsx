@@ -50,28 +50,40 @@ const workflowSteps = [
 
 const signalCategories = [
   {
-    title: "Time-sensitive language",
-    copy: "Phrases that pressure a reader to act quickly can make it harder to pause and verify a request.",
+    title: "Pressure and stated consequences",
+    copy: "Time limits, urgent instructions, and stated account or service consequences can make it harder to pause before acting.",
   },
   {
-    title: "Sensitive credential request",
-    copy: "Requests for passwords, codes, or sign-in credentials should be verified through an independent path.",
+    title: "Credential and authentication requests",
+    copy: "Requests for passwords, account codes, recovery codes, or an authentication link are shown with their exact text evidence.",
   },
   {
-    title: "Sensitive payment request",
-    copy: "Payment, bank-detail, or billing requests are worth confirming through a known vendor record or billing portal.",
+    title: "Financial requests",
+    copy: "Payment, bank-detail, gift-card, crypto, or wire requests are useful prompts to confirm through a known vendor or contact path.",
   },
   {
-    title: "Character substitution in sender domain",
-    copy: "A conservative rule notes certain digit-for-letter patterns that can be used to imitate familiar names.",
+    title: "Role or greeting paired with a request",
+    copy: "A claimed authority role or broad salutation is shown only when it appears alongside pressure or a sensitive request.",
   },
   {
-    title: "Supplied URL",
-    copy: "A supplied URL is shown as an informational cue for independent verification. It has zero risk weight by itself.",
+    title: "Account, refund, and reward pressure",
+    copy: "Account restriction, refund, reward, or prize language is shown only when paired with a visible request or pressure cue.",
   },
   {
-    title: "Sender and URL domains differ",
-    copy: "Different sender and supplied-URL domains can have legitimate reasons, but the detail is useful to verify independently.",
+    title: "Sender-domain structure",
+    copy: "The engine can show conservative digit-for-letter patterns, internationalized formats, or an unclear pasted address without inferring identity.",
+  },
+  {
+    title: "Supplied URL structure",
+    copy: "URL presence remains informational on its own. One visible structure detail, such as user information, an IP host, or an unusual port, may be shown separately without opening the URL.",
+  },
+  {
+    title: "Referenced high-risk file types",
+    copy: "A filename is shown only when message text asks the reader to open or download a high-risk extension. No attachment is opened or inspected.",
+  },
+  {
+    title: "Sender and supplied-URL comparison",
+    copy: "When locally comparable domains differ, the report shows that detail for independent verification. Different domains can have legitimate reasons.",
   },
 ] as const;
 
@@ -89,7 +101,7 @@ function HowItWorksSection() {
     <section id="how-it-works" className="content-section" aria-labelledby="how-it-works-heading">
       <div className="section-intro">
         <p className="eyebrow">How it works</p>
-        <h2 id="how-it-works-heading" className="section-title">A calm path from message to safer verification.</h2>
+        <h2 id="how-it-works-heading" className="section-title">A calm path from message to independent verification.</h2>
         <p className="section-copy">PhishLens keeps the learning sequence simple: local evidence first, independent verification next, and an optional explanation only after a report exists.</p>
       </div>
       <ol className="workflow-grid">

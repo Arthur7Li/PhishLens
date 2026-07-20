@@ -53,10 +53,10 @@ npm run build
 ## Manual test path
 
 1. Start the app and open the local URL.
-2. Select **Account review request**, then choose **Analyze observable signals**. Confirm the report calls out the character substitution, urgency, credential request, and supplied URL without claiming intent.
-3. Select **Overdue invoice notice**. Confirm the report identifies payment pressure and a supplied URL, while never claiming phishing is certain.
-4. Select **Routine team update**. Confirm the report says no configured cues were detected and explicitly says that is not proof of safety.
-5. With otherwise routine text, enter `https://harbor-studio.example/notes`. Confirm the supplied URL appears as an informational URL cue and the headline says an informational detail is available for independent verification.
+2. Select **Account review request**, then choose **Analyze observable signals**. Confirm the report shows account-access pressure, a credential request, a sender-domain character cue, and the supplied URL without claiming intent.
+3. Select **Overdue invoice notice**. Confirm the report shows payment pressure, the supplied URL, and the explicit time-pressure/payment combination note without claiming phishing certainty.
+4. Select **Routine team update**. Confirm the report says no configured cues are shown and explicitly says that absence is not a safety verdict.
+5. With otherwise routine text, enter `https://harbor-studio.example/notes`. Confirm the supplied URL appears as an informational URL observation and the headline says an informational observation is available for independent verification.
 6. After any local report, confirm the optional explanation panel explains that local findings remain canonical. In public mode, it states that custom input never reaches Groq and live Groq explanation requires administrator access.
 7. As a public visitor, use each unchanged synthetic sample and choose **Check available explanation**. Confirm the visible label says: “Demo explanation based on PhishLens’ local rules — no content was sent to Groq.”
 8. As a public visitor, enter custom text, analyze it, and choose **Check available explanation**. Confirm the only explanation result says: “Live AI explanation is unavailable in this public demo. Your local deterministic report remains available.”
@@ -71,11 +71,23 @@ npm run build
 - Confirm header anchors, the mobile navigation control, the skip link, and the Repository and Issues links are keyboard operable.
 - Confirm the reduced-motion preference removes nonessential transitions and smooth scrolling.
 
-## Phase B: transparent local signal engine
+## Deterministic analysis
 
-Phase B replaces Phase A's pre-written report mappings with a pure, typed evaluator. Each finding declares its rule ID, source field, evidence, explanation, severity, and transparent risk weight. A supplied URL is always a zero-weight informational cue: it is never fetched and cannot raise the report level by itself. The conservative character-substitution rule only recognizes one mapped digit inside an otherwise alphabetic sender-domain token.
+The browser-local evaluator is the canonical report used by both the browser and the server route. Every finding has a stable rule ID, source field, exact pasted evidence, explanation, level, and transparent weight. The engine observes only the sender, subject, body, and optional URL that the visitor provides.
 
-Phase B itself added no GPT/OpenAI API calls, authentication, database, persistence, email integration, telemetry, URL fetching, or attachment handling. Later phases add only the separately described optional Groq explanation and narrow administrator session.
+It currently covers:
+
+- time pressure, stated consequences, credential/authentication requests, and financial requests;
+- authority or generic-salutation language only when paired with pressure or a sensitive request;
+- account restriction, refund, reward, and prize language only when paired with a request or pressure;
+- a referenced high-risk file extension only when the message text asks the reader to open or download it—no attachment is opened or inspected;
+- conservative sender-domain character substitutions, internationalized sender-domain formats, and clearly unreadable pasted address structure;
+- URL presence as a zero-weight informational observation, plus at most one local URL-structure detail (for example user-information text, an IP host, punycode, an unusual port, HTTP, deep subdomains, or encoded host text); and
+- conservative sender/supplied-URL comparable-domain differences.
+
+The report can add one documented combination point for time pressure paired with a credential or financial request, or authority language paired with a sensitive request. This relationship is shown in the report rather than hidden in a score. URL presence alone remains informational and cannot raise local context by itself.
+
+These are limited, synthetic-fixture-tested heuristics for pasted text. They do not inspect authenticated email headers, sender reputation, URL reputation or destinations, attachments, inbox history, or external context. A local observation does not establish identity, intent, or a definitive outcome.
 
 ## Phase C: optional Groq explanation
 

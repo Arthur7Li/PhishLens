@@ -34,7 +34,7 @@ const fields: Array<{ key: keyof EmailInput; label: string; placeholder: string;
 ];
 
 const sampleCuePreviews: Record<SampleEmail["id"], readonly string[]> = {
-  "account-review": ["Urgency", "Credential request", "URL supplied"],
+  "account-review": ["Account pressure", "Credential request", "Domain character cue"],
   "invoice-alert": ["Payment request", "URL supplied"],
   "team-update": ["Routine message", "Verify normally"],
 };

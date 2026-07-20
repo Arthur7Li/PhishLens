@@ -1,23 +1,21 @@
 /**
- * @file lib/phishing-signal-engine.ts
+ * Pure, shared deterministic evaluator for PhishLens.
  *
- * Pure deterministic evaluator for PhishLens Phase B. The engine runs entirely
- * in the browser and converts user-entered text into transparent rule findings.
- * It has no I/O, persistence, URL fetching, attachment handling, or AI calls.
+ * This module runs unchanged in the browser and server route. It has no I/O,
+ * persistence, URL fetching, attachment handling, reputation lookup, or AI
+ * call; it turns pasted text into transparent local observations only.
  */
 
-import type { Analysis, AnalysisRiskLevel, EmailInput, SignalFinding } from "./schemas";
+import { getContextModifiers, getVerificationSteps } from "./deterministic-analysis/context";
+import type { Analysis, AnalysisRiskLevel, ContextModifier, EmailInput, SignalFinding } from "./schemas";
 import { signalRules } from "./signal-rules";
 
-const safeNextSteps = [
-  "Avoid using links or phone numbers provided in the message until you verify them independently.",
-  "Open the organization’s known website or a trusted internal directory instead of replying or clicking.",
-  "If this reached a work account, use your organization’s established reporting process.",
-];
-
-/** Converts the nonzero rule weights into a transparent, non-verdict report level. */
-export function getAnalysisRiskLevel(signals: readonly SignalFinding[]): AnalysisRiskLevel {
-  const totalWeight = signals.reduce((sum, signal) => sum + signal.riskWeight, 0);
+/** Converts rule weights plus one explicit combination note into a non-verdict local context level. */
+export function getAnalysisRiskLevel(
+  signals: readonly SignalFinding[],
+  contextModifiers: readonly ContextModifier[] = [],
+): AnalysisRiskLevel {
+  const totalWeight = [...signals, ...contextModifiers].reduce((sum, item) => sum + item.riskWeight, 0);
 
   if (totalWeight === 0) return "informational";
   if (totalWeight === 1) return "caution";
@@ -25,39 +23,44 @@ export function getAnalysisRiskLevel(signals: readonly SignalFinding[]): Analysi
   return "elevated";
 }
 
-/** Creates a calibrated headline that never claims an email is safe or malicious. */
+/** Creates a calibrated headline that describes local context without labelling an email. */
 function createHeadline(riskLevel: AnalysisRiskLevel, signalCount: number): string {
-  if (riskLevel === "informational" && signalCount === 0) return "No configured cues were detected in this local review.";
-  if (riskLevel === "informational") return "An informational detail is available for independent verification.";
+  if (riskLevel === "informational" && signalCount === 0) return "No configured cues are shown in this local review.";
+  if (riskLevel === "informational") return "An informational observation is available for independent verification.";
   if (riskLevel === "caution") return "A limited observable cue warrants a careful pause.";
   if (riskLevel === "review") return "Several observable cues warrant extra care.";
   return "Multiple observable cues warrant extra care.";
 }
 
-/** Builds the short report summary from the exact rules that matched. */
-function createSummary(signals: readonly SignalFinding[]): string {
+/** Builds a short report summary from the exact rules and any documented combination note. */
+function createSummary(signals: readonly SignalFinding[], contextModifiers: readonly ContextModifier[]): string {
   if (signals.length === 0) {
-    return "This local rule set did not detect its configured patterns. That absence is not a safety verdict; independent verification can still matter.";
+    return "This local rule set does not show its configured patterns. That absence is not a safety verdict; independent verification can still matter.";
   }
 
   const titles = signals.map((signal) => signal.title.toLowerCase()).join(", ");
-  return `This local deterministic review found: ${titles}. These observations describe text patterns only and do not establish intent.`;
+  const combination = contextModifiers[0];
+  const combinationText = combination ? ` A documented combination also contributes to local context: ${combination.title.toLowerCase()}.` : "";
+
+  return `This local deterministic review found: ${titles}.${combinationText} These observations describe pasted text and URL structure only; they do not establish intent.`;
 }
 
-/** Evaluates every configured rule and returns a fully typed educational report. */
+/** Evaluates every configured rule once and returns the same typed report in browser and server contexts. */
 export function analyzePhishingSignals(input: EmailInput): Analysis {
   const signals = signalRules.flatMap((rule) => {
     const finding = rule.evaluate(input);
     return finding ? [finding] : [];
   });
-  const riskLevel = getAnalysisRiskLevel(signals);
+  const contextModifiers = getContextModifiers(signals);
+  const riskLevel = getAnalysisRiskLevel(signals, contextModifiers);
 
   return {
     riskLevel,
     headline: createHeadline(riskLevel, signals.length),
-    summary: createSummary(signals),
+    summary: createSummary(signals, contextModifiers),
     signals,
-    nextSteps: safeNextSteps,
-    learningNote: "Phase B uses transparent local rules only. It does not contact senders, open URLs, inspect attachments, store input, or make a definitive verdict.",
+    contextModifiers,
+    nextSteps: getVerificationSteps(signals),
+    learningNote: "This browser-local analysis inspects only the pasted sender, subject, body, and optional URL. It does not open links, inspect attachments, contact senders, use reputation data, store input, or make a definitive verdict.",
   };
 }
