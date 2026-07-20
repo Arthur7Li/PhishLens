@@ -4,7 +4,7 @@
 
 PhishLens is an open-source, security-sensitive educational prototype for transparent email triage. It identifies a small, documented set of observable text cues and suggests safer verification steps; it does not make definitive phishing or safety verdicts.
 
-The code is release-candidate ready after the final audit. Before a public Build Week submission, the operator must make the Vercel deployment publicly reachable, choose a repository license, and complete the required Devpost submission details.
+The code is release-candidate ready after the final audit. Before a public Build Week submission, the operator must confirm the Vercel deployment remains publicly reachable and complete the required Devpost submission details. The repository includes an MIT License at its root.
 
 ## B. Architecture and data flow
 
@@ -45,7 +45,7 @@ False-positive resistance is a release requirement. Prefer a narrow compound con
 ## D. Local development
 
 ```bash
-npm install
+npm ci
 npm run dev
 npm run lint
 npm run typecheck
@@ -88,6 +88,7 @@ Use an ignored `.env.local` for local development. Never commit, log, paste, or 
 - Its deterministic rules are intentionally small heuristics for education, not a security verdict engine.
 - Groq/model availability and structured-output quality can affect the optional explanation; the local report remains available.
 - Public unchanged synthetic samples can receive a static local fallback. Public custom input does not receive a substitute explanation and never reaches Groq.
+- As of the final QA on July 20, 2026, `npm audit --omit=dev` reports a moderate PostCSS advisory through Next.js 16.2.10. The current npm `next@latest` is the same release and pins the same dependency; recheck for an upstream patched release rather than applying an unsupported override.
 - No output is a definitive determination that an email is phishing, malicious, legitimate, or safe.
 
 ## H. Safe future roadmap
@@ -96,7 +97,7 @@ Use an ignored `.env.local` for local development. Never commit, log, paste, or 
 
 - Keep tests and documentation synchronized with every observable rule or wording change.
 - Add focused accessibility regression checks and maintain the 320px, keyboard, light/dark/system, and reduced-motion manual review.
-- Choose and document an open-source license before broad public reuse.
+- Review the existing MIT License before changing distribution terms or accepting contributions that require different licensing.
 
 ### Changes that require a threat-model or security review first
 

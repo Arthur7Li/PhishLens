@@ -1,7 +1,7 @@
 # PhishLens
 
 PhishLens is an educational, evidence-first phishing triage prototype for OpenAI Build Week’s **Developer Tools** category. It helps a reader identify observable cues in an email, understand why they matter, and select a safer next step—without declaring an email safe or malicious.
-[Deployment URL](https://phish-lens-self.vercel.app/) · [Repository](https://github.com/Arthur7Li/PhishLens) · [Report an issue](https://github.com/Arthur7Li/PhishLens/issues)
+[Deployment URL](https://phish-lens-self.vercel.app/) · [Repository](https://github.com/Arthur7Li/PhishLens) · [Report an issue](https://github.com/Arthur7Li/PhishLens/issues) · [MIT License](LICENSE)
 
 Before sharing the deployment URL with judges, verify that Vercel Deployment Protection permits public access.
 
@@ -32,8 +32,10 @@ The analyzer remains immediately available at [`#analyze`](#analyze). It is foll
 
 ## Run locally
 
+Use Node.js 20.9.0 or later and npm. The public demo is a web application deployed on Vercel; the local workflow below uses the locked dependency tree.
+
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
@@ -131,7 +133,7 @@ The explanation route processes requests in this order: same-origin check; bound
 
 ## Open source
 
-PhishLens is an open-source, security-sensitive educational prototype for transparent email triage. It is not a company or enterprise security product. Review the [source code](https://github.com/Arthur7Li/PhishLens), [report a problem](https://github.com/Arthur7Li/PhishLens/issues), or open a focused contribution that preserves its deterministic-first, privacy, and security boundaries. See [CONTRIBUTING.md](CONTRIBUTING.md) for local setup and contribution guidance.
+PhishLens is an open-source, security-sensitive educational prototype for transparent email triage. It is not a company or enterprise security product. Review the [source code](https://github.com/Arthur7Li/PhishLens), [report a problem](https://github.com/Arthur7Li/PhishLens/issues), read the [MIT License](LICENSE), or open a focused contribution that preserves its deterministic-first, privacy, and security boundaries. See [CONTRIBUTING.md](CONTRIBUTING.md) for local setup and contribution guidance.
 
 ## Build Week development note
 
@@ -140,6 +142,7 @@ Codex with GPT-5.6 was used to build and test the project. The optional runtime 
 ## Build Week submission checklist
 
 - [ ] Public repository URL (or share a private repository with the required judging addresses).
+- [ ] MIT License present in the repository root.
 - [ ] README with setup, samples, security boundaries, and explicit Codex/GPT-5.6 contribution notes.
 - [ ] Runnable deployment or equally clear local test instructions.
 - [ ] Public demo video under three minutes, showing the product and explaining Codex/GPT-5.6 use.

@@ -5,7 +5,7 @@ Focused, reviewable contributions are welcome to this security-sensitive educati
 ## Local setup
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 

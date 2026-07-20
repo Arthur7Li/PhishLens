@@ -87,3 +87,12 @@
 - Added a named fictional regression fixture; focused urgency, credential-adjacent request, loss-pressure, combination, current-input rerun, and browser/server-normalization equivalence tests.
 - Added an explicit current-input analysis helper and invalidation token around the one-frame local render, preventing a canceled or earlier scheduled report from replacing the result of a later Analyze action.
 - No external services, URL fetching, attachment handling, inbox access, storage, telemetry, AI-provider behavior, authorization, session handling, rate limits, privacy boundaries, or verdict behavior changed.
+
+## July 20, 2026 — Final pre-submission QA
+
+- Fast-forwarded the local review checkout to the current default branch and verified the documented Vercel demo URL returns a public HTTP 200 response without submitting content.
+- Reinstalled the lockfile-resolved dependencies with `npm ci`; lint, typecheck, the 80-test no-network suite, and the production build all passed.
+- Corrected README and handoff references to the repository's actual MIT License, added the verified Node.js 20.9.0 prerequisite, and updated the reproducible-install and submission instructions accordingly.
+- Reviewed the deterministic, public fallback, administrator, route-validation, prompt-boundary, session, origin, no-store, and secret-handling paths without making live Groq requests.
+- `npm audit --omit=dev` reports the upstream Next.js-pinned PostCSS advisory. The current npm `next@latest` is the same 16.2.10 release and still pins that dependency, so no unsupported override or speculative upgrade was applied.
+- No application behavior, API route, security boundary, authorization rule, provider behavior, environment contract, or data-flow logic changed in this QA pass.
