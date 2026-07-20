@@ -6,12 +6,21 @@ Website Link: https://phish-lens-doraemon7.vercel.app/
 ## Current boundaries
 
 - One Next.js, TypeScript, and Tailwind page.
-- Three local, synthetic sample emails only.
+- Three local synthetic sample emails plus custom pasted email text.
 - Transparent, deterministic in-browser signal engine is the canonical source of observable evidence.
 - An optional, separate AI explanation can be requested only after a local report exists.
 - No public accounts, registration, database, email integration, telemetry, persistence, URL fetching, or attachment processing.
 - Local deterministic analysis stays in the browser. Public users can request only the clearly labeled local explanation for unchanged synthetic samples; custom public input never reaches Groq.
 - One project administrator may sign in with a short-lived server-only session and explicitly consent to a live Groq explanation. The server route, not the UI, enforces that boundary.
+
+## Experience and accessibility
+
+- The first-run flow makes sample selection, local evidence, and independent verification easy to follow before any optional explanation.
+- Keyboard users can reach the sample selector, form controls, local report, optional explanation, and discreet administrator control with visible focus indicators.
+- A validation error moves focus to the relevant form control. On narrow screens, a completed local report receives focus through its heading so the result is easy to find without changing desktop reading flow.
+- Layouts are designed for 320px, 375px, 768px, and desktop widths. Long evidence and URLs wrap rather than force horizontal scrolling.
+- Informational, caution, review, and elevated presentations use text labels in addition to colour. Reduced-motion preferences remove nonessential transitions.
+- The deterministic local report remains primary; the optional AI explanation is visually secondary and cannot change local findings.
 
 ## Run locally
 
@@ -39,8 +48,8 @@ npm run build
 4. Select **Routine team update**. Confirm the report says no configured cues were detected and explicitly says that is not proof of safety.
 5. With otherwise routine text, enter `https://harbor-studio.example/notes`. Confirm the supplied URL appears as a caution and the headline says an informational detail is available for independent verification.
 6. After any local report, confirm the optional explanation panel explains that local findings remain canonical. In public mode, it states that custom content stays local and live Groq explanation requires administrator access.
-7. As a public visitor, use each unchanged synthetic sample and choose **Generate AI explanation**. Confirm the visible label says: “Demo explanation based on PhishLens’ local rules — no content was sent to Groq.”
-8. As a public visitor, enter custom text, analyze it, and choose **Generate AI explanation**. Confirm the only explanation result says: “Live AI explanation is unavailable in this public demo. Your local deterministic report remains available.”
+7. As a public visitor, use each unchanged synthetic sample and choose **Check available explanation**. Confirm the visible label says: “Demo explanation based on PhishLens’ local rules — no content was sent to Groq.”
+8. As a public visitor, enter custom text, analyze it, and choose **Check available explanation**. Confirm the only explanation result says: “Live AI explanation is unavailable in this public demo. Your local deterministic report remains available.”
 9. Edit any field and verify the result and any explanation clear; press Analyze again and confirm the local deterministic report appears.
 10. Use Tab, Enter, and Space to select examples, move through the form, submit the analysis, and reach the optional explanation button. Confirm focus is always visible and the validation error identifies its field.
 11. At 320 px, 375 px, and 768 px viewport widths, confirm there is no horizontal scrolling and controls remain readable and usable.
@@ -50,11 +59,11 @@ npm run build
 
 Phase B replaces Phase A's pre-written report mappings with a pure, typed evaluator. Each finding declares its rule ID, source field, evidence, explanation, severity, and transparent risk weight. A supplied URL is always a zero-weight caution: it is never fetched and cannot raise the report level by itself. The conservative character-substitution rule only recognizes one mapped digit inside an otherwise alphabetic sender-domain token.
 
-The application still has no GPT/OpenAI API calls, authentication, database, persistence, email integration, telemetry, URL fetching, or attachment handling. The optional Phase C explanation described below is the only external request, and it happens only after separate user consent.
+Phase B itself added no GPT/OpenAI API calls, authentication, database, persistence, email integration, telemetry, URL fetching, or attachment handling. Later phases add only the separately described optional Groq explanation and narrow administrator session.
 
 ## Phase C: optional Groq explanation
 
-The deterministic browser-only engine remains canonical. After it creates a report, a reader may explicitly choose **Generate AI explanation**. The browser sends only the submitted sender, subject, body, optional URL, and the request is revalidated on the Next.js server. The server recomputes the deterministic findings instead of accepting findings from the browser, then may send the bounded fields and canonical findings to Groq.
+The deterministic browser-only engine remains canonical. After it creates a report, an authenticated administrator may explicitly choose **Generate AI explanation**. Public visitors can receive only the local demo explanation for an unchanged synthetic sample; public custom input never reaches Groq. The server revalidates bounded submitted fields and recomputes deterministic findings instead of accepting findings from the browser, then may send those fields and canonical findings to Groq only for an authenticated administrator.
 
 The optional runtime AI explanation uses the free Groq developer API and the open-weight `openai/gpt-oss-20b` model. It is educational only: it is constrained to explain the server-computed signals, cannot add or override findings, and must never declare an email safe or malicious. Responses use Groq strict JSON Schema structured output, then receive Zod and semantic validation on the server before returning to the browser.
 

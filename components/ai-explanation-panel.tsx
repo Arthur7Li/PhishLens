@@ -1,10 +1,9 @@
 /**
  * @file components/ai-explanation-panel.tsx
  *
- * Consent-driven client UI for the optional Phase C explanation. It appears
- * only after the browser has produced a canonical deterministic report and
- * makes a same-origin request to the server route; the Groq key never reaches
- * this component or the browser.
+ * Secondary, consent-driven presentation for an optional explanation. The
+ * deterministic local report remains visually and conceptually primary; this
+ * component does not make or interpret local findings itself.
  */
 
 "use client";
@@ -25,10 +24,15 @@ type AiExplanationPanelProps = {
   isAdminAuthenticated: boolean;
 };
 
-/** Renders explanation content only after its source mode has been made explicit. */
+/** Renders result content only after its local, demo, or live source is explicit. */
 function ExplanationContent({ result, analysis }: { result: AiExplanationResponse; analysis: Analysis }) {
   if (result.mode === "unavailable") {
-    return <p className="mt-5 text-sm leading-6 text-[#ffd080]" role="status">{result.message}</p>;
+    return (
+      <div className="mt-5 rounded-2xl border border-[#a47b40] bg-[#342817] p-4 text-[#ffd080]" role="status">
+        <p className="text-xs font-semibold tracking-[0.14em] uppercase">Explanation unavailable</p>
+        <p className="mt-2 text-sm leading-6">{result.message}</p>
+      </div>
+    );
   }
 
   const isDemo = result.mode === "demo";
@@ -50,7 +54,7 @@ function ExplanationContent({ result, analysis }: { result: AiExplanationRespons
             {result.explanation.signalExplanations.map((item) => (
               <li key={item.signalId} className="rounded-xl border border-[#294663] bg-[#0a192a] p-3 text-sm leading-6 text-[#b8cde0]">
                 <p className="font-semibold text-[#eff8ff]">{analysis.signals.find((signal) => signal.id === item.signalId)?.title ?? item.signalId}</p>
-                <p className="mt-1">{item.explanation}</p>
+                <p className="mt-1 break-words [overflow-wrap:anywhere]">{item.explanation}</p>
               </li>
             ))}
           </ul>
@@ -61,8 +65,8 @@ function ExplanationContent({ result, analysis }: { result: AiExplanationRespons
         <ol className="mt-3 space-y-2">
           {result.explanation.suggestedNextSteps.map((step, index) => (
             <li key={step} className="flex gap-3 text-sm leading-6 text-[#c2d4e2]">
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#1a4651] text-xs font-bold text-[#66e3c4]">{index + 1}</span>
-              {step}
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#2b6d6c] bg-[#1a4651] text-xs font-bold text-[#66e3c4]">{index + 1}</span>
+              <span className="break-words [overflow-wrap:anywhere]">{step}</span>
             </li>
           ))}
         </ol>
@@ -71,6 +75,7 @@ function ExplanationContent({ result, analysis }: { result: AiExplanationRespons
   );
 }
 
+/** Renders the optional explanation action after, and subordinate to, the local report. */
 export function AiExplanationPanel({ input, analysis, isAdminAuthenticated }: AiExplanationPanelProps) {
   const [result, setResult] = useState<AiExplanationResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -105,10 +110,17 @@ export function AiExplanationPanel({ input, analysis, isAdminAuthenticated }: Ai
     }
   };
 
+  const actionLabel = isLoading
+    ? (isAdminAuthenticated ? "Generating explanation…" : "Checking available explanation…")
+    : (isAdminAuthenticated ? (error ? "Try again" : "Generate AI explanation") : "Check available explanation");
+
   return (
-    <section className="rounded-3xl border border-[#27405f] bg-[#0d1b2e]/90 p-5 shadow-2xl shadow-black/20 sm:p-7" aria-labelledby="ai-explanation-heading" aria-busy={isLoading}>
-      <p className="text-sm font-semibold tracking-[0.18em] text-[#66e3c4] uppercase">Optional next step</p>
-      <h2 id="ai-explanation-heading" className="mt-2 text-2xl font-semibold text-white">Generate AI explanation</h2>
+    <section className="rounded-3xl border border-[#315272] bg-[#0a192a]/75 p-5 sm:p-6" aria-labelledby="ai-explanation-heading" aria-busy={isLoading}>
+      <p className="text-sm font-semibold tracking-[0.18em] text-[#9ec6de] uppercase">Optional learning layer</p>
+      <div className="mt-2 flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
+        <h2 id="ai-explanation-heading" className="text-xl font-semibold text-white">Optional explanation</h2>
+        {isAdminAuthenticated && <p className="rounded-full border border-[#315272] px-2.5 py-1 text-xs font-semibold text-[#9ec6de]">Admin session active</p>}
+      </div>
       <p className="mt-3 text-sm leading-6 text-[#b6cadb]">The local deterministic report above remains the canonical evidence. An AI explanation can help interpret its {analysis.signals.length} local finding{analysis.signals.length === 1 ? "" : "s"} for education, but cannot change its findings or make a safety verdict.</p>
       <p id="ai-explanation-consent" className="mt-3 rounded-xl border border-[#315272] bg-[#102840] p-3 text-sm leading-6 text-[#c5d8e9]">
         {isAdminAuthenticated ? (
@@ -117,10 +129,10 @@ export function AiExplanationPanel({ input, analysis, isAdminAuthenticated }: Ai
           <>Public demo mode keeps custom content local. Unchanged synthetic samples may show a local demo explanation; live Groq explanations require administrator access.</>
         )}
       </p>
-      <button type="button" onClick={generateExplanation} disabled={isLoading} aria-describedby="ai-explanation-consent" className="mt-5 min-h-11 rounded-xl bg-[#66e3c4] px-4 py-2.5 text-sm font-bold text-[#082019] transition hover:bg-[#8aefd6] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#66e3c4]/30 disabled:cursor-not-allowed disabled:opacity-60">
-        {isLoading ? "Generating explanation…" : "Generate AI explanation"}
+      <button type="button" onClick={generateExplanation} disabled={isLoading} aria-describedby="ai-explanation-consent" className="mt-5 min-h-11 rounded-xl border border-[#4e9e90] bg-transparent px-4 py-2.5 text-sm font-bold text-[#9df1dc] transition hover:border-[#66e3c4] hover:bg-[#123738] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#66e3c4]/30 disabled:cursor-wait disabled:opacity-60 motion-reduce:transition-none">
+        {actionLabel}
       </button>
-      {isLoading && <p className="mt-4 text-sm leading-6 text-[#9ec6de]" role="status">Generating an optional explanation. Your local deterministic report remains available.</p>}
+      {isLoading && <p className="mt-4 text-sm leading-6 text-[#9ec6de]" role="status">{isAdminAuthenticated ? "Generating an optional explanation. Your local deterministic report remains available." : "Checking the available educational explanation. Your local deterministic report remains available."}</p>}
       {error && <p className="mt-4 text-sm leading-6 text-[#ffd080]" role="alert">{error}</p>}
       {result && <ExplanationContent result={result} analysis={analysis} />}
     </section>
