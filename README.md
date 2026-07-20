@@ -1,7 +1,7 @@
 # PhishLens
 
 PhishLens is an educational, evidence-first phishing triage prototype for OpenAI Build Week’s **Developer Tools** category. It helps a reader identify observable cues in an email, understand why they matter, and select a safer next step—without declaring an email safe or malicious.
-Website Link: https://phish-lens-doraemon7.vercel.app/
+[Live demo](https://phish-lens-doraemon7.vercel.app/) · [Repository](https://github.com/Arthur7Li/PhishLens) · [Report an issue](https://github.com/Arthur7Li/PhishLens/issues)
 
 ## Current boundaries
 
@@ -13,13 +13,19 @@ Website Link: https://phish-lens-doraemon7.vercel.app/
 - Local deterministic analysis stays in the browser. Public users can request only the clearly labeled local explanation for unchanged synthetic samples; custom public input never reaches Groq.
 - One project administrator may sign in with a short-lived server-only session and explicitly consent to a live Groq explanation. The server route, not the UI, enforces that boundary.
 
+## Product-site structure
+
+The analyzer remains immediately available at [`#analyze`](#analyze). It is followed by concise sections for **How it works**, **What PhishLens checks**, **Safety boundaries**, **About**, and open-source participation. The local deterministic report remains the primary result throughout; the optional explanation stays separate and cannot change local findings.
+
 ## Experience and accessibility
 
 - The first-run flow makes sample selection, local evidence, and independent verification easy to follow before any optional explanation.
+- Light, dark, and system appearance modes are available. An explicit visual preference is stored locally only and is non-sensitive.
+- Sticky anchor navigation, the native mobile navigation control, and the theme choices are keyboard operable. A skip link, landmarks, visible focus, and a clear heading hierarchy support keyboard reading.
 - Keyboard users can reach the sample selector, form controls, local report, optional explanation, and discreet administrator control with visible focus indicators.
 - A validation error moves focus to the relevant form control. On narrow screens, a completed local report receives focus through its heading so the result is easy to find without changing desktop reading flow.
 - Layouts are designed for 320px, 375px, 768px, and desktop widths. Long evidence and URLs wrap rather than force horizontal scrolling.
-- Informational, caution, review, and elevated presentations use text labels in addition to colour. Reduced-motion preferences remove nonessential transitions.
+- Informational, caution, review, and elevated presentations use text labels in addition to colour across both themes. Reduced-motion preferences remove nonessential transitions and smooth scrolling.
 - The deterministic local report remains primary; the optional AI explanation is visually secondary and cannot change local findings.
 
 ## Run locally
@@ -46,7 +52,7 @@ npm run build
 2. Select **Account review request**, then choose **Analyze observable signals**. Confirm the report calls out the character substitution, urgency, credential request, and supplied URL without claiming intent.
 3. Select **Overdue invoice notice**. Confirm the report identifies payment pressure and a supplied URL, while never claiming phishing is certain.
 4. Select **Routine team update**. Confirm the report says no configured cues were detected and explicitly says that is not proof of safety.
-5. With otherwise routine text, enter `https://harbor-studio.example/notes`. Confirm the supplied URL appears as a caution and the headline says an informational detail is available for independent verification.
+5. With otherwise routine text, enter `https://harbor-studio.example/notes`. Confirm the supplied URL appears as an informational URL cue and the headline says an informational detail is available for independent verification.
 6. After any local report, confirm the optional explanation panel explains that local findings remain canonical. In public mode, it states that custom content stays local and live Groq explanation requires administrator access.
 7. As a public visitor, use each unchanged synthetic sample and choose **Check available explanation**. Confirm the visible label says: “Demo explanation based on PhishLens’ local rules — no content was sent to Groq.”
 8. As a public visitor, enter custom text, analyze it, and choose **Check available explanation**. Confirm the only explanation result says: “Live AI explanation is unavailable in this public demo. Your local deterministic report remains available.”
@@ -55,9 +61,15 @@ npm run build
 11. At 320 px, 375 px, and 768 px viewport widths, confirm there is no horizontal scrolling and controls remain readable and usable.
 12. Verify the educational, privacy, and non-definitive-verdict notices are visible before and after analysis.
 
+### Product-site checks
+
+- Confirm Light, Dark, and System appearance modes, including persistence of an explicit visual choice.
+- Confirm header anchors, the mobile navigation control, the skip link, and the Repository and Issues links are keyboard operable.
+- Confirm the reduced-motion preference removes nonessential transitions and smooth scrolling.
+
 ## Phase B: transparent local signal engine
 
-Phase B replaces Phase A's pre-written report mappings with a pure, typed evaluator. Each finding declares its rule ID, source field, evidence, explanation, severity, and transparent risk weight. A supplied URL is always a zero-weight caution: it is never fetched and cannot raise the report level by itself. The conservative character-substitution rule only recognizes one mapped digit inside an otherwise alphabetic sender-domain token.
+Phase B replaces Phase A's pre-written report mappings with a pure, typed evaluator. Each finding declares its rule ID, source field, evidence, explanation, severity, and transparent risk weight. A supplied URL is always a zero-weight informational cue: it is never fetched and cannot raise the report level by itself. The conservative character-substitution rule only recognizes one mapped digit inside an otherwise alphabetic sender-domain token.
 
 Phase B itself added no GPT/OpenAI API calls, authentication, database, persistence, email integration, telemetry, URL fetching, or attachment handling. Later phases add only the separately described optional Groq explanation and narrow administrator session.
 
@@ -98,6 +110,10 @@ The explanation route processes requests in this order: same-origin check; bound
 1. Create an API key in the [Groq Console](https://console.groq.com/keys) and copy it directly into a password manager. Do not put the key in a prompt, issue, commit, screenshot, or client-side variable.
 2. For local development, create the ignored `.env.local` file from `.env.example`. Add the Groq key, administrator password, and session-signing secret only to that local file. Never commit `.env.local`.
 3. In Vercel, open the project settings and add the three names in `.env.example` with their real secret values. Select **Production** only, save each entry, and redeploy the production deployment. Do not use a `NEXT_PUBLIC_` prefix or put any value in source control.
+
+## Open source
+
+PhishLens is an open-source, security-sensitive educational prototype for transparent email triage. It is not a company or enterprise security product. Review the [source code](https://github.com/Arthur7Li/PhishLens), [report a problem](https://github.com/Arthur7Li/PhishLens/issues), or open a focused contribution that preserves its deterministic-first, privacy, and security boundaries. See [CONTRIBUTING.md](CONTRIBUTING.md) for local setup and contribution guidance.
 
 ## Build Week development note
 

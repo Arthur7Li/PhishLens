@@ -3,14 +3,14 @@
  *
  * Next.js root page – the single entry point for the PhishLens UI.
  *
- * This file is intentionally minimal. All layout, state, and interaction logic
- * live in `TriageWorkspace`. The page component exists solely to satisfy the
- * Next.js App Router file convention and mount the workspace as the default export.
+ * This file stays deliberately small. The server verifies the administrator
+ * session before passing a boolean presentation hint to the product-site shell;
+ * route-level authorization remains enforced independently by the AI route.
  *
- * @see components/triage-workspace.tsx for the full application shell
+ * @see components/phishlens-site.tsx for the composed product-site shell
  */
 
-import { TriageWorkspace } from "@/components/triage-workspace";
+import { PhishLensSite } from "@/components/phishlens-site";
 import { ADMIN_SESSION_COOKIE_NAME, hasValidAdminSession } from "@/lib/admin-session.server";
 import { cookies } from "next/headers";
 
@@ -22,5 +22,5 @@ export default async function Home() {
     cookieStore.get(ADMIN_SESSION_COOKIE_NAME)?.value,
   );
 
-  return <TriageWorkspace initialAdminAuthenticated={isAdminAuthenticated} />;
+  return <PhishLensSite initialAdminAuthenticated={isAdminAuthenticated} />;
 }

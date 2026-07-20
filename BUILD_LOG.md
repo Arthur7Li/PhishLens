@@ -44,3 +44,13 @@
 - Kept the optional AI panel visually secondary to the deterministic local report while clarifying public, demo, unavailable, and authenticated administrator presentation states.
 - No backend, security, authorization, deterministic-analysis, Groq-behavior, rate-limit, session, environment, or privacy boundary changed.
 - Codex was used to implement, review, and verify this frontend refinement.
+
+## July 19, 2026 — Product-site and UI-system redesign
+
+- Added a product-site shell that keeps the local analyzer immediately available while adding concise How it works, actual observable-signal, safety-boundary, about, and open-source sections.
+- Added light, dark, and system appearance modes with a locally persisted, non-sensitive visual preference.
+- Improved responsive layout, semantic navigation, keyboard flow, visible focus, text-plus-colour context labels, and reduced-motion handling.
+- Kept the deterministic local report visually and conceptually primary; the optional AI explanation remains secondary.
+- Added real repository, Issues, and contribution links with concise local contribution guidance.
+- No backend route, security logic, authorization, session behavior, deterministic analysis, Groq behavior, rate limit, environment handling, privacy boundary, or data-flow logic changed.
+- Codex was used to implement, review, and verify this product-site frontend refinement.

@@ -12,11 +12,12 @@
  *   description are injected server-side into the `<head>` without a separate
  *   `<Head>` component.
  *
- * PhishLens is a single-page application; this is the only layout file and
- * no nested layouts are used in Phase A.
+ * The theme provider stores only a non-sensitive visual preference locally.
+ * It never receives user email content, session state, or environment values.
  */
 
 import type { Metadata } from "next";
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -26,8 +27,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }
