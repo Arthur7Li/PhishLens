@@ -44,9 +44,15 @@ describe("optional AI explanation schemas", () => {
     expect(validateAiExplanation({ ...validExplanation(), signalExplanations: [] }, analysis)).toMatchObject({ success: false });
   });
 
-  it("rejects prohibited safety or maliciousness verdicts", () => {
+  it.each([
+    "This email is malicious.",
+    "This email is legitimate.",
+    "This is phishing.",
+    "This message is not phishing.",
+    "This is a scam.",
+  ])("rejects prohibited verdict language: %s", (summary) => {
     const verdict = validExplanation();
-    verdict.educationalSummary = "This email is malicious.";
+    verdict.educationalSummary = summary;
 
     expect(validateAiExplanation(verdict, analysis)).toMatchObject({ success: false });
   });

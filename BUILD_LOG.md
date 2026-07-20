@@ -27,7 +27,7 @@
 ## July 18, 2026 — Phase D
 - Added a compact three-step orientation and clearer visual separation between local deterministic evidence and the optional Groq explanation.
 - Improved deterministic finding cards, no-configured-cues messaging, safer-next-step scanability, mobile touch targets, keyboard focus, semantic form submission, sample selection state, validation associations, and loading status.
-- Corrected fallback truthfulness: the local sample explanation labeled “no content was sent to Groq” is now possible only before a provider attempt, when the key is absent or the local capacity guard blocks the request. Post-attempt provider failures return only the generic unavailable message.
+- Corrected fallback truthfulness: the local sample explanation labeled “no content was sent to Groq” is possible only before a provider attempt, including public fallback, a missing key, or a local capacity guard. Post-attempt provider failures return only the generic unavailable message.
 - Added unit coverage for the fallback-stage rule and preserved all existing privacy, no-fetch, no-storage, and non-verdict boundaries.
 
 ## July 18, 2026 â€” Phase E
@@ -54,3 +54,15 @@
 - Added real repository, Issues, and contribution links with concise local contribution guidance.
 - No backend route, security logic, authorization, session behavior, deterministic analysis, Groq behavior, rate limit, environment handling, privacy boundary, or data-flow logic changed.
 - Codex was used to implement, review, and verify this product-site frontend refinement.
+
+## July 20, 2026 — Final release-candidate audit
+
+- Audited repository integrity, package-lock consistency, ignored environment/build artifacts, public repository links, contributor guidance, and the current Build Week documentation.
+- Hardened optional-provider safety checks: prompt delimiters now remain application-owned when hostile email text contains angle brackets, and server-side semantic validation rejects a broader set of prohibited email verdict assertions.
+- Added no-network regression coverage for delimiter-closing prompt input and direct/negated verdict wording.
+- Corrected public-mode copy and fallback comments so they accurately state that public custom input never reaches Groq and a labeled local sample explanation is possible only before a provider attempt.
+- Fixed focused accessibility and responsive defects: the skip link can move focus to main content, the compact header remains in use through the constrained tablet range, theme controls meet the practical touch-target size, light-mode helper text has stronger contrast, mobile navigation closes after selection with an accurate state label, and long optional-model text wraps on narrow screens.
+- Added `docs/HANDOFF.md` with operating boundaries, deployment guidance, caveats, a safe future roadmap, and regression checks; README now links to it and flags the need to verify public Vercel access.
+- Verified `npm run lint`, `npm run typecheck`, `npm run test` (11 files, 41 tests), and `npm run build` successfully.
+- No deterministic signal rules, risk/context behavior, API route order, public-versus-admin authorization decision, session settings, provider/model choice, rate limits, environment-variable contract, storage behavior, or URL/attachment/inbox boundary changed.
+- Codex was used to inspect, harden, document, and verify this release-candidate refinement.

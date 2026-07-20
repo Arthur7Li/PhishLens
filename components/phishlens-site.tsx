@@ -26,7 +26,7 @@ export function PhishLensSite({ initialAdminAuthenticated }: PhishLensSiteProps)
   return (
     <div className="site-shell">
       <SiteHeader />
-      <main id="main-content" className="site-main">
+      <main id="main-content" className="site-main" tabIndex={-1}>
         <TriageWorkspace isAdminAuthenticated={isAdminAuthenticated} />
         <ProductSections />
       </main>

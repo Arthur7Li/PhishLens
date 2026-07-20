@@ -1,7 +1,9 @@
 # PhishLens
 
 PhishLens is an educational, evidence-first phishing triage prototype for OpenAI Build Week’s **Developer Tools** category. It helps a reader identify observable cues in an email, understand why they matter, and select a safer next step—without declaring an email safe or malicious.
-[Live demo](https://phish-lens-doraemon7.vercel.app/) · [Repository](https://github.com/Arthur7Li/PhishLens) · [Report an issue](https://github.com/Arthur7Li/PhishLens/issues)
+[Deployment URL](https://phish-lens-doraemon7.vercel.app/) · [Repository](https://github.com/Arthur7Li/PhishLens) · [Report an issue](https://github.com/Arthur7Li/PhishLens/issues)
+
+Before sharing the deployment URL with judges, verify that Vercel Deployment Protection permits public access.
 
 ## Current boundaries
 
@@ -37,6 +39,8 @@ npm run dev
 
 Open `http://localhost:3000`.
 
+For operating, securing, and continuing the project, see [docs/HANDOFF.md](docs/HANDOFF.md).
+
 ## Validate
 
 ```bash
@@ -53,7 +57,7 @@ npm run build
 3. Select **Overdue invoice notice**. Confirm the report identifies payment pressure and a supplied URL, while never claiming phishing is certain.
 4. Select **Routine team update**. Confirm the report says no configured cues were detected and explicitly says that is not proof of safety.
 5. With otherwise routine text, enter `https://harbor-studio.example/notes`. Confirm the supplied URL appears as an informational URL cue and the headline says an informational detail is available for independent verification.
-6. After any local report, confirm the optional explanation panel explains that local findings remain canonical. In public mode, it states that custom content stays local and live Groq explanation requires administrator access.
+6. After any local report, confirm the optional explanation panel explains that local findings remain canonical. In public mode, it states that custom input never reaches Groq and live Groq explanation requires administrator access.
 7. As a public visitor, use each unchanged synthetic sample and choose **Check available explanation**. Confirm the visible label says: “Demo explanation based on PhishLens’ local rules — no content was sent to Groq.”
 8. As a public visitor, enter custom text, analyze it, and choose **Check available explanation**. Confirm the only explanation result says: “Live AI explanation is unavailable in this public demo. Your local deterministic report remains available.”
 9. Edit any field and verify the result and any explanation clear; press Analyze again and confirm the local deterministic report appears.
@@ -86,7 +90,7 @@ The optional runtime AI explanation uses the free Groq developer API and the ope
 - The route limits raw request bodies to 10,000 characters and caps sender, subject, body, and URL fields before a provider call.
 - The application does not fetch or visit supplied URLs, execute attachments, connect to inboxes, store submissions, log email content, or add analytics.
 - Every optional-route response includes `Cache-Control: no-store`.
-- If the key is unavailable or the local demo capacity guard rejects a request before any provider call, only an unchanged synthetic sample can receive a visibly labeled local static explanation. Custom text receives no fallback content, only the unavailable message.
+- Only before a provider attempt can begin—during public mode, when the key is unavailable, or when the local demo capacity guard rejects an administrator request—can an unchanged synthetic sample receive a visibly labeled local static explanation. Custom text receives no fallback content, only the unavailable message.
 - After any Groq provider attempt, including an upstream rate limit, timeout, malformed response, or validation failure, the app returns only the generic unavailable message. It never labels that state as “no content was sent to Groq.”
 
 ### Public-demo rate limits
