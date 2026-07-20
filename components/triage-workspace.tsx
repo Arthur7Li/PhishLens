@@ -44,6 +44,7 @@
 import { useState } from "react";
 import { AnalysisReport } from "@/components/analysis-report";
 import { AiExplanationPanel } from "@/components/ai-explanation-panel";
+import { AdminAccess } from "@/components/admin-access";
 import { EmailTriageForm } from "@/components/email-triage-form";
 import { SafetyNotice } from "@/components/safety-notice";
 import { analyzePhishingSignals } from "@/lib/phishing-signal-engine";
@@ -52,13 +53,19 @@ import { emailInputSchema, type Analysis, type EmailInput, type SampleEmail } fr
 
 const emptyInput: EmailInput = { sender: "", subject: "", body: "", url: "" };
 
-export function TriageWorkspace() {
+type TriageWorkspaceProps = {
+  /** Server-verified state used only to tailor the quiet administrator control. */
+  initialAdminAuthenticated: boolean;
+};
+
+export function TriageWorkspace({ initialAdminAuthenticated }: TriageWorkspaceProps) {
   const [input, setInput] = useState<EmailInput>(emptyInput);
   const [selectedSampleId, setSelectedSampleId] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [analysisVersion, setAnalysisVersion] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [errorField, setErrorField] = useState<keyof EmailInput | null>(null);
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(initialAdminAuthenticated);
 
   const handleChange = (field: keyof EmailInput, value: string) => {
     setInput((current) => ({ ...current, [field]: value }));
@@ -110,8 +117,8 @@ export function TriageWorkspace() {
         </ol>
       </section>
       <SafetyNotice />
-      <div className="mt-7 grid gap-7 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]"><EmailTriageForm input={input} samples={sampleEmails} selectedSampleId={selectedSampleId} error={error} errorField={errorField} onChange={handleChange} onSample={handleSample} onAnalyze={handleAnalyze} /><div className="space-y-7"><AnalysisReport analysis={analysis} />{analysis && <AiExplanationPanel key={analysisVersion} input={input} analysis={analysis} />}</div></div>
-      <footer className="mt-10 border-t border-[#27405f] pt-5 text-sm leading-6 text-[#7694ad]">Built as a security-sensitive educational prototype. Local deterministic analysis stays in the browser. The optional AI explanation sends submitted content to Groq only after you choose it. PhishLens does not fetch URLs, execute attachments, connect to inboxes, or retain submitted content.</footer>
+      <div className="mt-7 grid gap-7 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]"><EmailTriageForm input={input} samples={sampleEmails} selectedSampleId={selectedSampleId} error={error} errorField={errorField} onChange={handleChange} onSample={handleSample} onAnalyze={handleAnalyze} /><div className="space-y-7"><AnalysisReport analysis={analysis} />{analysis && <AiExplanationPanel key={analysisVersion} input={input} analysis={analysis} isAdminAuthenticated={isAdminAuthenticated} />}</div></div>
+      <footer className="mt-10 flex flex-col gap-4 border-t border-[#27405f] pt-5 text-sm leading-6 text-[#7694ad] sm:flex-row sm:items-start sm:justify-between sm:gap-8"><p className="max-w-4xl">Built as a security-sensitive educational prototype. Local deterministic analysis stays in the browser. The optional AI explanation sends submitted content to Groq only after you choose it. PhishLens does not fetch URLs, execute attachments, connect to inboxes, or retain submitted content.</p><AdminAccess isAdminAuthenticated={isAdminAuthenticated} onSessionChange={setIsAdminAuthenticated} /></footer>
     </main>
   );
 }

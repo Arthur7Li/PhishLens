@@ -29,3 +29,10 @@
 - Improved deterministic finding cards, no-configured-cues messaging, safer-next-step scanability, mobile touch targets, keyboard focus, semantic form submission, sample selection state, validation associations, and loading status.
 - Corrected fallback truthfulness: the local sample explanation labeled “no content was sent to Groq” is now possible only before a provider attempt, when the key is absent or the local capacity guard blocks the request. Post-attempt provider failures return only the generic unavailable message.
 - Added unit coverage for the fallback-stage rule and preserved all existing privacy, no-fetch, no-storage, and non-verdict boundaries.
+
+## July 18, 2026 â€” Phase E
+- Added a deliberately narrow, server-enforced single-administrator session for optional live Groq explanations, while preserving fully local deterministic analysis for every public visitor.
+- Added same-origin `POST` validation, timing-safe server-side password comparison, signed eight-hour `jose` session cookies, logout cookie clearing, and a best-effort in-memory five-failed-login-per-IP-per-15-minutes guard.
+- Changed the Groq route authorization order so it validates bounded input and recomputes canonical local findings before session verification; non-admin requests return only public static-demo or unavailable behavior and never reach Groq, configuration checks, or capacity checks.
+- Added a quiet footer sign-in control and kept explicit consent immediately before every administrator-initiated Groq explanation.
+- Added no-network tests for the session helper, login limiter, same-origin guard, and public explanation route behavior. No public accounts, database, third-party authentication, analytics, persistence, URL fetching, or attachment processing were added.

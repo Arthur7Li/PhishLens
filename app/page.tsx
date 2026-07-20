@@ -11,7 +11,16 @@
  */
 
 import { TriageWorkspace } from "@/components/triage-workspace";
+import { ADMIN_SESSION_COOKIE_NAME, hasValidAdminSession } from "@/lib/admin-session.server";
+import { cookies } from "next/headers";
 
-export default function Home() {
-  return <TriageWorkspace />;
+export default async function Home() {
+  // Session verification happens on the server, so the client receives only a
+  // boolean UI state and never a session token or administrator secret.
+  const cookieStore = await cookies();
+  const isAdminAuthenticated = await hasValidAdminSession(
+    cookieStore.get(ADMIN_SESSION_COOKIE_NAME)?.value,
+  );
+
+  return <TriageWorkspace initialAdminAuthenticated={isAdminAuthenticated} />;
 }

@@ -6,11 +6,14 @@
  * no logging or persistence, and returns no-store responses.
  */
 
+import { cookies } from "next/headers";
 import { MAX_AI_REQUEST_BODY_CHARS, aiExplanationInputSchema, type AiExplanationResponse } from "@/lib/ai-explanation-schema";
 import { createAiExplanationFallback } from "@/lib/ai-explanation-fallback";
+import { ADMIN_SESSION_COOKIE_NAME, hasValidAdminSession } from "@/lib/admin-session.server";
 import { checkAndConsumeDemoRequest, getClientIp } from "@/lib/demo-rate-limit.server";
 import { generateGroqExplanation, isGroqConfigured } from "@/lib/groq-explanation.server";
 import { analyzePhishingSignals } from "@/lib/phishing-signal-engine";
+import { isSameOriginPost } from "@/lib/request-origin.server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -27,6 +30,12 @@ function jsonResponse(body: AiExplanationResponse | { error: string }, status = 
 
 /** Handles a same-origin opt-in request without accepting client-supplied analysis or sample IDs. */
 export async function POST(request: Request): Promise<Response> {
+  // State-changing requests must originate from this deployment. Cookies use
+  // SameSite=Strict as a second, browser-enforced boundary.
+  if (!isSameOriginPost(request)) {
+    return jsonResponse({ error: "Request could not be completed." }, 403);
+  }
+
   let requestText: string;
 
   try {
@@ -61,6 +70,16 @@ export async function POST(request: Request): Promise<Response> {
 
   const input = parsedInput.data;
   const analysis = analyzePhishingSignals(input);
+
+  // Validate the signed, expiring admin session only after bounded input has
+  // been parsed and the canonical local report recomputed. Non-admin callers
+  // always receive public behavior and can never reach Groq or configuration checks.
+  const cookieStore = await cookies();
+  const isAdmin = await hasValidAdminSession(cookieStore.get(ADMIN_SESSION_COOKIE_NAME)?.value);
+
+  if (!isAdmin) {
+    return jsonResponse(createAiExplanationFallback(input, "before-provider"));
+  }
 
   // A missing key stops the request before any provider call, so unchanged
   // synthetic samples may truthfully receive their local demo explanation.
